@@ -17,7 +17,7 @@ export default function LandingPage() {
           <div className="bg-brand-blue w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-brand-blue/20">
             <Zap className="text-white w-6 h-6 fill-current" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-brand-black">Applify</span>
+          <span className="text-2xl font-bold tracking-tight text-brand-black">Applify V2</span>
         </div>
         <div className="hidden md:flex gap-8 text-sm font-semibold text-brand-gray-400">
           <a href="#vault" className="hover:text-brand-black transition-colors">The Vault</a>
@@ -154,18 +154,18 @@ function BookOpen(props: any) {
   return (
     <svg
       {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      xmlns=\"http://www.w3.org/2000/svg\"
+      width=\"24\"
+      height=\"24\"
+      viewBox=\"0 0 24 24\"
+      fill=\"none\"
+      stroke=\"currentColor\"
+      strokeWidth=\"2\"
+      strokeLinecap=\"round\"
+      strokeLinejoin=\"round\"
     >
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+      <path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\" />
+      <path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\" />
     </svg>
   )
 }
