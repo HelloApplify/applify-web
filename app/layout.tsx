@@ -1,13 +1,10 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-
 export const metadata: Metadata = {
-  title: 'Applify | Action Protocols for Elite Performance',
-  description: 'Turn world-class insights into immediate action with interactive action protocols.',
+  title: 'Applify | Action Protocols',
+  description: 'Turn insights into action.',
 }
 
 export default function RootLayout({
@@ -17,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans`}>{children}</body>
+      <body>{children}</body>
     </html>
   )
 }
