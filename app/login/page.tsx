@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -12,29 +12,47 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setMessage(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        },
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        setMessage('Check your email to confirm your account.')
+      }
     } else {
-      router.push('/dashboard')
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        router.push('/dashboard')
+      }
     }
+    setLoading(false)
   }
 
   return (
     <div className="min-h-screen bg-[#FBFBFB] flex items-center justify-center p-4">
+      {/* Background Glow */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-[#007AFF]/5 blur-[120px] rounded-full" />
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-[#007AFF]/5 blur-[120px] rounded-full" />
@@ -52,12 +70,16 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold tracking-tight text-[#1D1D1F]">Applify</span>
           </Link>
-          <h1 className="text-3xl font-bold text-[#1D1D1F] tracking-tight">Welcome back</h1>
-          <p className="text-[#86868B] mt-2">Enter your details to access your vault</p>
+          <h1 className="text-3xl font-bold text-[#1D1D1F] tracking-tight">
+            {isSignUp ? 'Create an account' : 'Welcome back'}
+          </h1>
+          <p className="text-[#86868B] mt-2">
+            {isSignUp ? 'Enter your details to join the vault' : 'Enter your details to access your vault'}
+          </p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl border border-[#D2D2D7]/30 p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[#1D1D1F] mb-1.5 ml-1">Email</label>
               <div className="relative">
@@ -98,6 +120,16 @@ export default function LoginPage() {
               </motion.div>
             )}
 
+            {message && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="text-green-600 text-sm bg-green-50 p-3 rounded-xl border border-green-100"
+              >
+                {message}
+              </motion.div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -107,7 +139,7 @@ export default function LoginPage() {
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <span>Sign In</span>
+                  <span>{isSignUp ? 'Sign Up' : 'Sign In'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -116,10 +148,13 @@ export default function LoginPage() {
 
           <div className="mt-8 pt-8 border-t border-[#F5F5F7] text-center">
             <p className="text-[#86868B] text-sm">
-              Don't have an account?{' '}
-              <Link href="/#pricing" className="text-[#007AFF] font-medium hover:underline">
-                Get access to the Vault
-              </Link>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button 
+                onClick={() => setIsSignUp(!isSignUp)} 
+                className="text-[#007AFF] font-medium hover:underline focus:outline-none"
+              >
+                {isSignUp ? 'Sign In' : 'Get access to the Vault'}
+              </button>
             </p>
           </div>
         </div>
