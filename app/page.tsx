@@ -25,13 +25,14 @@ export default function LandingPage() {
           </div>
           <span className="text-2xl font-black tracking-tighter text-white">APPLIFY</span>
         </div>
-        <div className="hidden md:flex gap-8 text-sm font-semibold text-gray-400">
-          <a href="#vault" className="hover:text-white transition-colors">The Vault</a>
-          <a href="#how" className="hover:text-white transition-colors">How it Works</a>
+        <div className="flex items-center gap-4">
+          <Link href="/login?mode=signin" className="hidden sm:block text-sm font-semibold text-gray-400 hover:text-white transition-colors">
+            Sign In
+          </Link>
+          <Link href="/login?mode=signup" className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+            Claim Access
+          </Link>
         </div>
-        <Link href="/login" className="text-sm font-bold bg-white/10 backdrop-blur-md px-6 py-2.5 rounded-full text-white hover:bg-white hover:text-black transition-all border border-white/10">
-          Sign In
-        </Link>
       </nav>
 
       {/* Hero Section */}
@@ -44,9 +45,12 @@ export default function LandingPage() {
           <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
             World-class insights, compressed into interactive action protocols. Stop reading for entertainment and start building for results.
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link href="/login" className="bg-white text-black flex items-center gap-2 text-lg px-10 py-4 rounded-2xl font-bold shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:scale-105 transition-transform">
-              Access the Vault <ArrowRight className="w-5 h-5" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/login?mode=signup" className="w-full sm:w-auto bg-white text-black flex items-center justify-center gap-2 text-lg px-10 py-4 rounded-2xl font-bold shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:scale-105 transition-transform">
+              Claim Access <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link href="/login?mode=signin" className="w-full sm:w-auto bg-white/5 backdrop-blur-md text-white border border-white/10 flex items-center justify-center gap-2 text-lg px-10 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all">
+              Access the Vault
             </Link>
           </div>
         </div>
