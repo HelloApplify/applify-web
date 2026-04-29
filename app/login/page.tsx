@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Mail, Lock, ArrowRight, Loader2, CheckCircle2, ChevronLeft } from 'lucide-react'
+import { Zap, Mail, Lock, ArrowRight, Loader2, CheckCircle2, ChevronLeft, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 function LoginContent() {
@@ -13,6 +13,7 @@ function LoginContent() {
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSignUp, setIsSignUp] = useState(initialMode)
@@ -22,7 +23,9 @@ function LoginContent() {
   const supabase = createClient()
 
   useEffect(() => {
-    setIsSignUp(searchParams.get('mode') === 'signup')
+    const mode = searchParams.get('mode')
+    if (mode === 'signup') setIsSignUp(true)
+    if (mode === 'signin') setIsSignUp(false)
   }, [searchParams])
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -30,6 +33,12 @@ function LoginContent() {
     setLoading(true)
     setError(null)
     setMessage(null)
+
+    if (isSignUp && password !== confirmPassword) {
+      setError("Security keys do not match. Please verify.")
+      setLoading(false)
+      return
+    }
 
     try {
       if (isSignUp) {
@@ -41,7 +50,7 @@ function LoginContent() {
           },
         })
         if (error) throw error
-        setMessage('Protocol initialized. Check your email for confirmation.')
+        setMessage('Account initialization started. Please verify your email.')
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -75,54 +84,65 @@ function LoginContent() {
     }
   }
 
-  const springConfig = { type: "spring", stiffness: 400, damping: 30 }
-
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-6 text-white font-sans selection:bg-blue-500/30 overflow-hidden relative">
-      {/* Dynamic Background */}
+      {/* Precision Background Layers */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[140px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-slate-800/10 blur-[140px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-slate-800/5 blur-[120px] rounded-full" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
+        {/* Brand Identity */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-center mb-10"
+          className="flex flex-col items-center mb-12"
         >
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.15)] group-hover:scale-110 transition-transform duration-500">
-              <Zap className="text-black w-6 h-6 fill-current" />
+          <Link href="/" className="group flex flex-col items-center">
+            <div className="w-16 h-16 bg-white rounded-[1.25rem] flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.1)] group-hover:scale-105 transition-all duration-500 mb-4">
+              <Zap className="text-black w-8 h-8 fill-current" />
             </div>
-            <span className="text-3xl font-black tracking-tighter">APPLIFY</span>
+            <span className="text-2xl font-black tracking-widest">APPLIFY</span>
           </Link>
         </motion.div>
 
-        {/* Main Card */}
+        {/* Auth Interface */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-8 md:p-10 shadow-2xl backdrop-blur-3xl relative overflow-hidden"
+          layout
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="bg-[#0D0D0D] border border-white/5 rounded-[3rem] p-8 md:p-12 shadow-2xl backdrop-blur-3xl relative overflow-hidden"
         >
-          {/* Accent Line */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+          {/* Subtle Glass Highlight */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
           <div className="mb-10 text-center">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">
-              {isSignUp ? 'Initialize Protocol' : 'Access Vault'}
-            </h1>
-            <p className="text-gray-500 text-sm font-medium">
-              {isSignUp ? 'Construct your neural pathway' : 'Resume your execution sequences'}
-            </p>
+            <motion.h1 
+              key={isSignUp ? 'signup' : 'signin'}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-3xl font-bold tracking-tight mb-3"
+            >
+              {isSignUp ? 'Create Account' : 'Welcome Back'}
+            </motion.h1>
+            <motion.p 
+              key={isSignUp ? 'signup-p' : 'signin-p'}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-gray-500 text-sm font-medium"
+            >
+              {isSignUp ? 'Initialize your personal vault' : 'Access your secure protocols'}
+            </motion.p>
           </div>
 
-          {/* Social Auth */}
+          {/* Social Access Control */}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-black rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-[0.98] mb-6 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            className="w-full flex items-center justify-center gap-3 px-6 py-4.5 bg-white text-black rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-[0.98] mb-8 shadow-lg"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -137,58 +157,73 @@ function LoginContent() {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/5"></div>
             </div>
-            <span className="relative bg-[#0A0A0A] px-4 text-[10px] uppercase tracking-[0.2em] font-black text-gray-600">
-              Professional Authentication
+            <span className="relative bg-[#0D0D0D] px-4 text-[9px] uppercase tracking-[0.3em] font-black text-gray-700">
+              Direct Encryption
             </span>
           </div>
 
-          {/* Email Form */}
+          {/* Core Credentials Form */}
           <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-1.5">
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Professional Email"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
+            <div className="relative group">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email Address"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                required
+              />
             </div>
 
-            <div className="space-y-1.5">
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Security Key"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
+            <div className="relative group">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                required
+              />
             </div>
+
+            <AnimatePresence>
+              {isSignUp && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="relative group overflow-hidden"
+                >
+                  <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm Password"
+                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                    required
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <AnimatePresence mode="wait">
               {error && (
                 <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-red-400 text-xs font-bold px-1"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-red-400 text-xs font-bold px-1 py-2 text-center"
                 >
                   {error}
                 </motion.div>
               )}
               {message && (
                 <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-green-400 text-xs font-bold px-1 flex items-center gap-2"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-green-400 text-xs font-bold px-1 py-2 text-center flex items-center justify-center gap-2"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   {message}
@@ -199,46 +234,48 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              className="w-full bg-white text-black font-bold py-5 rounded-2xl hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-6 shadow-xl"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <span>{isSignUp ? 'Claim Access' : 'Authorize Login'}</span>
+                  <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Toggle Button at the very bottom of the card */}
-          <div className="mt-8 text-center border-t border-white/5 pt-6">
+          {/* Experience Toggle */}
+          <div className="mt-12 text-center border-t border-white/5 pt-8">
             <button 
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-gray-500 hover:text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 mx-auto"
+              className="text-gray-500 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2 mx-auto group"
             >
               {isSignUp ? (
                 <>
-                  <ChevronLeft className="w-3 h-3" /> Already have a vault? Authorize
+                  <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                  Already have an account? Sign In
                 </>
               ) : (
                 <>
-                  Need to initialize a vault? Claim Access <ArrowRight className="w-3 h-3" />
+                  Need to join the vault? Create Account 
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </div>
         </motion.div>
 
-        {/* Legal Footer */}
+        {/* Terminal Meta */}
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center text-gray-700 text-[10px] mt-8 uppercase tracking-widest font-black"
+          className="text-center text-gray-800 text-[9px] mt-12 uppercase tracking-[0.4em] font-black"
         >
-          Secure Neural Interface • AES-256 Encryption • Applify Vault
+          Secure Node Access • Applify v1.0.4
         </motion.p>
       </div>
     </div>
