@@ -35,7 +35,7 @@ function LoginContent() {
     setMessage(null)
 
     if (isSignUp && password !== confirmPassword) {
-      setError("Security keys do not match. Please verify.")
+      setError("Passwords do not match.")
       setLoading(false)
       return
     }
@@ -50,7 +50,7 @@ function LoginContent() {
           },
         })
         if (error) throw error
-        setMessage('Account initialization started. Please verify your email.')
+        setMessage('Verification link sent. Check your inbox.')
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -72,10 +72,6 @@ function LoginContent() {
       provider: 'google',
       options: {
         redirectTo: `${location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
       },
     })
     if (error) {
@@ -85,64 +81,54 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6 text-white font-sans selection:bg-blue-500/30 overflow-hidden relative">
-      {/* Precision Background Layers */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-slate-800/5 blur-[120px] rounded-full" />
+    <div className="min-h-screen bg-black text-white selection:bg-blue-500/30 font-sans flex items-center justify-center p-6 overflow-hidden relative">
+      {/* Background Ambience - Identical to Landing Page */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-blue-600/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-slate-800/10 blur-[120px] rounded-full" />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Brand Identity */}
+      <div className="w-full max-w-[420px] relative z-10">
+        {/* Navbar-style Logo */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center mb-12"
+          className="flex flex-col items-center mb-10"
         >
-          <Link href="/" className="group flex flex-col items-center">
-            <div className="w-16 h-16 bg-white rounded-[1.25rem] flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.1)] group-hover:scale-105 transition-all duration-500 mb-4">
-              <Zap className="text-black w-8 h-8 fill-current" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="bg-white w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.1)] group-hover:scale-110 transition-transform duration-500">
+              <Zap className="text-black w-5 h-5 fill-current" />
             </div>
-            <span className="text-2xl font-black tracking-widest">APPLIFY</span>
+            <span className="text-2xl font-black tracking-tighter text-white">APPLIFY</span>
           </Link>
         </motion.div>
 
-        {/* Auth Interface */}
+        {/* Main Interface */}
         <motion.div
           layout
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="bg-[#0D0D0D] border border-white/5 rounded-[3rem] p-8 md:p-12 shadow-2xl backdrop-blur-3xl relative overflow-hidden"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white/[0.02] border border-white/10 rounded-[2.5rem] p-8 md:p-10 backdrop-blur-3xl shadow-2xl overflow-hidden relative"
         >
-          {/* Subtle Glass Highlight */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-          <div className="mb-10 text-center">
+          <div className="text-center mb-10">
             <motion.h1 
               key={isSignUp ? 'signup' : 'signin'}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-3xl font-bold tracking-tight mb-3"
+              className="text-3xl font-black tracking-tight mb-2"
             >
               {isSignUp ? 'Create Account' : 'Welcome Back'}
             </motion.h1>
-            <motion.p 
-              key={isSignUp ? 'signup-p' : 'signin-p'}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="text-gray-500 text-sm font-medium"
-            >
-              {isSignUp ? 'Initialize your personal vault' : 'Access your secure protocols'}
-            </motion.p>
+            <p className="text-gray-500 text-sm font-medium tracking-tight">
+              {isSignUp ? 'Start your high-velocity transformation.' : 'Continue your execution sequence.'}
+            </p>
           </div>
 
-          {/* Social Access Control */}
+          {/* Social Auth */}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 px-6 py-4.5 bg-white text-black rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-[0.98] mb-8 shadow-lg"
+            className="w-full h-14 flex items-center justify-center gap-3 bg-white text-black rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-[0.98] mb-6 shadow-xl"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -153,37 +139,34 @@ function LoginContent() {
             Continue with Google
           </button>
 
-          <div className="relative mb-8 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/5"></div>
-            </div>
-            <span className="relative bg-[#0D0D0D] px-4 text-[9px] uppercase tracking-[0.3em] font-black text-gray-700">
-              Direct Encryption
-            </span>
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-px flex-1 bg-white/5" />
+            <span className="text-[10px] font-black tracking-widest text-gray-700 uppercase">or</span>
+            <div className="h-px flex-1 bg-white/5" />
           </div>
 
-          {/* Core Credentials Form */}
+          {/* Form Control */}
           <form onSubmit={handleAuth} className="space-y-4">
             <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/20 transition-all placeholder-gray-700"
                 required
               />
             </div>
 
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/20 transition-all placeholder-gray-700"
                 required
               />
             </div>
@@ -191,18 +174,18 @@ function LoginContent() {
             <AnimatePresence>
               {isSignUp && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   className="relative group overflow-hidden"
                 >
-                  <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-white transition-colors" />
+                  <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm Password"
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4.5 pl-12 pr-4 text-sm font-medium placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all"
+                    className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/20 transition-all placeholder-gray-700"
                     required
                   />
                 </motion.div>
@@ -211,72 +194,55 @@ function LoginContent() {
 
             <AnimatePresence mode="wait">
               {error && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-red-400 text-xs font-bold px-1 py-2 text-center"
-                >
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-[11px] font-bold text-center px-2">
                   {error}
-                </motion.div>
+                </motion.p>
               )}
               {message && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-green-400 text-xs font-bold px-1 py-2 text-center flex items-center justify-center gap-2"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-blue-400 text-[11px] font-bold text-center px-2">
                   {message}
-                </motion.div>
+                </motion.p>
               )}
             </AnimatePresence>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-black font-bold py-5 rounded-2xl hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-6 shadow-xl"
+              className="w-full h-14 bg-white text-black font-black rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] mt-4 disabled:opacity-50"
             >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <>
-                  <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
+                  <span>{isSignUp ? 'Initialize Account' : 'Sign In'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Experience Toggle */}
-          <div className="mt-12 text-center border-t border-white/5 pt-8">
+          {/* Contextual Toggle */}
+          <div className="mt-8 pt-8 border-t border-white/5 text-center">
             <button 
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-gray-500 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2 mx-auto group"
+              className="text-gray-500 hover:text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 mx-auto group"
             >
               {isSignUp ? (
                 <>
-                  <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-                  Already have an account? Sign In
+                  <ChevronLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Back to Sign In
                 </>
               ) : (
                 <>
-                  Need to join the vault? Create Account 
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Don't have an account? <span className="text-white">Create Account</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </div>
         </motion.div>
 
-        {/* Terminal Meta */}
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center text-gray-800 text-[9px] mt-12 uppercase tracking-[0.4em] font-black"
-        >
-          Secure Node Access • Applify v1.0.4
-        </motion.p>
+        {/* Legal Micro-copy */}
+        <p className="text-center text-gray-800 text-[9px] font-black uppercase tracking-[0.3em] mt-10">
+          Secure Neural Interface • Applify Vault
+        </p>
       </div>
     </div>
   )
