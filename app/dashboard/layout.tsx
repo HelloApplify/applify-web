@@ -1,6 +1,7 @@
 import React from 'react'
-import { LayoutDashboard, Book, Award, Settings, LogOut, Zap } from 'lucide-react'
+import { LayoutDashboard, Book, Award, Settings, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { ApplifyLogo } from '@/components/ApplifyLogo'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,9 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/[0.05] bg-[#050505] hidden md:flex flex-col">
         <div className="p-6 flex items-center gap-3 border-b border-white/[0.05]">
-          <div className="w-8 h-8 rounded flex items-center justify-center bg-white">
-            <Zap className="text-black w-4 h-4 fill-current" />
-          </div>
+          <ApplifyLogo className="text-white w-8 h-8" />
           <span className="text-xl font-medium tracking-tight text-white">Applify</span>
         </div>
         

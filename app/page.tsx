@@ -1,8 +1,9 @@
 "use client"
 import React from 'react'
-import { ArrowRight, Zap, ChevronRight, Lock, BookOpen, Layers, Target, Shield } from 'lucide-react'
+import { ArrowRight, ChevronRight, Lock, BookOpen, Layers, Target, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { ApplifyLogo } from '@/components/ApplifyLogo'
 
 export default function LandingPage() {
   const library = [
@@ -23,9 +24,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.05] bg-black/40 backdrop-blur-xl">
         <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded flex items-center justify-center bg-white">
-              <Zap className="text-black w-4 h-4 fill-current" />
-            </div>
+            <ApplifyLogo className="text-white w-8 h-8" />
             <span className="text-xl font-medium tracking-tight text-white">Applify</span>
           </div>
           <div className="flex items-center gap-6">
@@ -200,9 +199,7 @@ export default function LandingPage() {
       <footer className="relative z-10 py-12 px-6 border-t border-white/[0.05] bg-[#050505]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-white rounded flex items-center justify-center">
-              <Zap className="text-black w-2.5 h-2.5 fill-current" />
-            </div>
+            <ApplifyLogo className="text-white w-5 h-5" />
             <span className="text-sm font-medium tracking-tight text-white">Applify</span>
           </div>
           <div className="flex gap-6 text-sm text-neutral-500">
