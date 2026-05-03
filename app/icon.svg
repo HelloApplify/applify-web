@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect width="100" height="100" rx="20" fill="black" />
-  <g fill="white">
-    <path d="M 32.4 19.2 L 46.48 19.2 L 15.68 80.8 L 1.6 80.8 Z" />
-    <path d="M 53.52 19.2 L 67.6 19.2 L 98.4 80.8 L 84.32 80.8 L 78.16 68.48 L 28.88 68.48 L 35.92 54.4 L 71.12 54.4 Z" />
+  <g transform="translate(15, 15) scale(0.7)" fill="white">
+    <path d="M 2 98 L 21.2 98 L 51.2 2 L 32 2 Z" />
+    <path d="M 98 98 L 78.8 98 L 52.4 13.52 L 56 2 L 68 2 Z" />
+    <path d="M 50 21.2 L 74 98 L 26 98 Z M 50 51.92 L 38.6 88.4 L 61.4 88.4 Z" fill-rule="evenodd" />
   </g>
 </svg>
