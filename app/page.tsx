@@ -24,7 +24,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.05] bg-black/40 backdrop-blur-xl">
         <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <ApplifyLogo className="text-white w-8 h-8" />
+            <ApplifyLogo className="text-white h-6" />
             <span className="text-xl font-medium tracking-tight text-white">Applify</span>
           </div>
           <div className="flex items-center gap-6">

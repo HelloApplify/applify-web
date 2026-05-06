@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/[0.05] bg-[#050505] hidden md:flex flex-col">
         <div className="p-6 flex items-center gap-3 border-b border-white/[0.05]">
-          <ApplifyLogo className="text-white w-8 h-8" />
+          <ApplifyLogo className="text-white h-6" />
           <span className="text-xl font-medium tracking-tight text-white">Applify</span>
         </div>
         
