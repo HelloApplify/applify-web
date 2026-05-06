@@ -24,7 +24,9 @@ export default async function Icon() {
       >
         <img 
           src={base64Image}
-          style={{ width: '100%', objectFit: 'contain' }} 
+          width={256}
+          height={201}
+          style={{ display: 'flex' }}
         />
       </div>
     ),
