@@ -27,6 +27,11 @@ function LoginContent() {
     const mode = searchParams.get('mode')
     if (mode === 'signup') setIsSignUp(true)
     if (mode === 'signin') setIsSignUp(false)
+      
+    const urlError = searchParams.get('error')
+    if (urlError) {
+      setError(urlError)
+    }
   }, [searchParams])
 
   const handleAuth = async (e: React.FormEvent) => {
