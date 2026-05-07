@@ -5,6 +5,7 @@ import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles,
 import { useProtocolStore } from '@/store/useProtocolStore'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import NarrationSlide from '@/components/NarrationSlide'
 
 const BrainEncoder = dynamic(() => import('@/components/visuals/BrainEncoder'), { ssr: false })
 const ForgettingCurve = dynamic(() => import('@/components/visuals/ForgettingCurve'), { ssr: false })
@@ -147,8 +148,13 @@ export default function ProtocolPlayer() {
                   </div>
                 )}
 
+                {/* Narration */}
+                {slide.type === 'narration' && slide.scenes && (
+                  <NarrationSlide title={slide.title} scenes={slide.scenes} />
+                )}
+
                 {/* Content / Quiz / Poll / Reflection / Visual */}
-                {!['celebration', 'checkpoint'].includes(slide.type) && (
+                {!['celebration', 'checkpoint', 'narration'].includes(slide.type) && (
                   <>
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
                       {slide.title}
