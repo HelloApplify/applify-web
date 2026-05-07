@@ -18,8 +18,8 @@ export default function LivingBackground({ color = '#3b82f6' }: LivingBackground
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 0.8 + 0.2, // Tiny, pin-point stars
-      opacity: Math.random() * 0.15 + 0.05,
+      size: Math.random() * 1.0 + 0.3, // Tiny, pin-point stars
+      opacity: Math.random() * 0.2 + 0.1, // Slightly higher base visibility
       depth: Math.random() * 0.3 + 0.1, // Subtle parallax
       twinkleSpeed: 4 + Math.random() * 6
     }))
@@ -32,7 +32,7 @@ export default function LivingBackground({ color = '#3b82f6' }: LivingBackground
         style={{
           x: useTransform(smoothX, [-0.5, 0.5], [-150, 150]),
           y: useTransform(smoothY, [-0.5, 0.5], [-150, 150]),
-          background: `radial-gradient(circle at center, ${color}08 0%, transparent 65%)`
+          background: `radial-gradient(circle at center, ${color}15 0%, transparent 70%)`
         }}
         className="absolute inset-[-20%] opacity-40 mix-blend-screen"
       />
@@ -51,7 +51,7 @@ export default function LivingBackground({ color = '#3b82f6' }: LivingBackground
       </div>
 
       {/* Ultra-subtle linear vignetting for professional depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-70" />
     </div>
   )
 }
@@ -64,15 +64,26 @@ function Star({ star, mouseX, mouseY, color }: { star: any, mouseX: any, mouseY:
   const x = useTransform(mouseX, [-0.5, 0.5], [star.depth * 30, star.depth * -30])
   const y = useTransform(mouseY, [-0.5, 0.5], [star.depth * 30, star.depth * -30])
 
-  // Soft Magnetic Luminescence
+  // Soft Magnetic Luminescence - Enhanced peak
   const opacity = useTransform(
     [mouseX, mouseY],
     ([latestX, latestY]: any[]) => {
       const dx = latestX - starX
       const dy = latestY - starY
       const distance = Math.sqrt(dx * dx + dy * dy)
-      const influence = Math.max(0, 1 - distance * 8) 
-      return star.opacity + influence * 0.4
+      const influence = Math.max(0, 1 - distance * 7) 
+      return star.opacity + influence * 0.7 // More visible peak
+    }
+  )
+
+  const starColor = useTransform(
+    [mouseX, mouseY],
+    ([latestX, latestY]: any[]) => {
+      const dx = latestX - starX
+      const dy = latestY - starY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      const influence = Math.max(0, 1 - distance * 10)
+      return influence > 0.1 ? color : '#FFFFFF'
     }
   )
 
@@ -86,10 +97,12 @@ function Star({ star, mouseX, mouseY, color }: { star: any, mouseX: any, mouseY:
         x,
         y,
         opacity,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: starColor,
+        // Stronger, tinted bloom
+        boxShadow: `0 0 ${star.size * 3}px ${color}50`
       }}
       animate={{
-        opacity: [star.opacity, star.opacity * 1.5, star.opacity]
+        opacity: [star.opacity, star.opacity * 2, star.opacity]
       }}
       transition={{
         duration: star.twinkleSpeed,
@@ -97,7 +110,7 @@ function Star({ star, mouseX, mouseY, color }: { star: any, mouseX: any, mouseY:
         ease: "easeInOut",
         delay: Math.random() * 5
       }}
-      className="absolute rounded-full shadow-[0_0_2px_rgba(255,255,255,0.3)]"
+      className="absolute rounded-full"
     />
   )
 }
