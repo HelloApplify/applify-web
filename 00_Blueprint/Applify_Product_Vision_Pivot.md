@@ -34,4 +34,8 @@ Avoid long walls of text.
   2. The "Financial Health" Audit (Money Management)
   3. The "Sleep Engine" Setup (Health/Habits)
 - Provide digital downloads & automations (Smart PDF/Notion templates, 5-day Check-in email sequences) to ensure the web experience translates to life application.
+<<<<<<< HEAD
 - **Goal**: Validate if users are interested and willing to pay ("Pre-Sale" test) before committing to mobile app development.
+=======
+- **Goal**: Validate if users are interested and willing to pay ("Pre-Sale" test) before committing to mobile app development.
+>>>>>>> 64fbe22 (fix: resolve auth callback 404 and implement error reporting)
