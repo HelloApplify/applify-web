@@ -18,6 +18,7 @@ export default function ForgettingCurve() {
       <div className="w-full bg-white/5 rounded-2xl border border-white/10 p-4 relative overflow-hidden">
         <div className="text-[10px] font-black uppercase tracking-widest text-red-400/60 mb-3">Without Review</div>
         <div className="relative h-28">
+          {/* Bar chart style */}
           <div className="flex items-end justify-between h-full gap-1.5">
             {markers.map((m, i) => (
               <motion.div key={m.label} className="flex-1 flex flex-col items-center gap-1"

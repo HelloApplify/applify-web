@@ -17,11 +17,13 @@ const VISUALS: Record<string, React.ComponentType> = {
 }
 
 export default function ProtocolPlayer() {
-  const { activeProtocol, currentSlideIndex, isModalOpen, nextSlide, prevSlide, closeModal, completeProtocol } = useProtocolStore()
+  const { activeProtocol, currentSlideIndex, isModalOpen, nextSlide, prevSlide, closeModal, completeProtocol, userInputs, setInput } = useProtocolStore()
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackText, setFeedbackText] = useState('')
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [showBlueprint, setShowBlueprint] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   if (!isModalOpen || !activeProtocol) return null
@@ -35,18 +37,30 @@ export default function ProtocolPlayer() {
   const handleOption = (idx: number) => {
     setSelectedOption(idx)
     const opt = slide.options?.[idx]
+    if (opt) setInput(slide.id, opt.label)
     if (slide.type === 'quiz' && opt?.feedback) {
       setFeedbackText(opt.feedback)
       setShowFeedback(true)
     }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (isLast && !showBlueprint) {
+      setIsGenerating(true)
+      // Simulate AI generating a personalized plan based on userInputs
+      await new Promise(r => setTimeout(r, 2000))
+      setIsGenerating(false)
+      setShowBlueprint(true)
+      return
+    }
+
     setSelectedOption(null)
     setShowFeedback(false)
     setFeedbackText('')
-    if (isLast) {
+    
+    if (isLast && showBlueprint) {
       completeProtocol(activeProtocol.id)
+      setShowBlueprint(false)
       closeModal()
     } else {
       nextSlide()
@@ -124,28 +138,115 @@ export default function ProtocolPlayer() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
 
-                {/* Celebration */}
+                {/* Celebration & Blueprint */}
                 {slide.type === 'celebration' && (
-                  <div className="text-center py-8">
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-                      className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                      <Trophy className="w-10 h-10 text-emerald-400" />
-                    </motion.div>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
-                    <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                  <div className="space-y-8">
+                    {!showBlueprint ? (
+                      <div className="text-center py-8">
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
+                          className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                          <Trophy className="w-10 h-10 text-emerald-400" />
+                        </motion.div>
+                        <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
+                        <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                            <Target className="w-5 h-5 text-emerald-400" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-black text-white tracking-tight">Your Applied Blueprint</h3>
+                            <p className="text-xs font-bold text-emerald-400/70 uppercase tracking-widest">Personalized Strategy</p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-4">
+                          <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                            <h4 className="text-xs font-black text-white/30 uppercase tracking-widest flex items-center gap-2">
+                              <Brain className="w-3 h-3" /> Core Focus
+                            </h4>
+                            <p className="text-white font-bold leading-relaxed">
+                              You are mastering <span className="text-emerald-400">"{userInputs['a2'] || 'Applied Cognition'}"</span> using Active Recall.
+                            </p>
+                          </div>
+
+                          <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                            <h4 className="text-xs font-black text-white/30 uppercase tracking-widest flex items-center gap-2">
+                              <Zap className="w-3 h-3" /> Tomorrow's Recall Trigger
+                            </h4>
+                            <div className="p-3 rounded-lg bg-black/40 border border-white/5 italic text-white/70 text-sm">
+                              "{userInputs['a3'] || 'What is the most important concept I learned today?'}"
+                            </div>
+                          </div>
+
+                          <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                            <h4 className="text-xs font-black text-white/30 uppercase tracking-widest flex items-center gap-2">
+                              <Sparkles className="w-3 h-3" /> 7-Day Schedule
+                            </h4>
+                            <div className="space-y-2">
+                              {[
+                                { day: 'Day 1', task: 'First Recall Trigger (Active)', time: userInputs['a4'] || 'Tomorrow morning' },
+                                { day: 'Day 3', task: 'Feynman Technique (Teach)', time: '3 days from now' },
+                                { day: 'Day 7', task: 'Mastery Checkpoint', time: '7 days from now' }
+                              ].map((item, i) => (
+                                <div key={i} className="flex items-center justify-between text-sm">
+                                  <span className="font-bold text-white/40">{item.day}</span>
+                                  <span className="font-medium text-white/70">{item.task}</span>
+                                  <span className="text-[10px] font-black uppercase text-emerald-400/50">{item.time}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <p className="text-center text-[10px] font-medium text-white/20 uppercase tracking-[0.2em] pt-4">
+                          Blueprint saved to your Knowledge Vault
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {/* Checkpoint */}
-                {slide.type === 'checkpoint' && (
-                  <div className="text-center py-6">
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}
-                      className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center" style={{ backgroundColor: `${segColor}15`, border: `1px solid ${segColor}30` }}>
-                      <CheckCircle2 className="w-8 h-8" style={{ color: segColor }} />
-                    </motion.div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
-                    <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                {/* Loading State */}
+                {isGenerating && (
+                  <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center">
+                    <div className="relative">
+                      <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-16 h-16 rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Sparkles className="w-6 h-6 text-emerald-400 animate-pulse" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-white tracking-tight">Synthesizing Blueprint...</h3>
+                      <p className="text-sm font-medium text-white/40 mt-1">Catering the protocol to your specific goals</p>
+                    </div>
                   </div>
+                ) || (
+                  <>
+                    {/* Checkpoint */}
+                    {slide.type === 'checkpoint' && (
+                      <div className="text-center py-6">
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}
+                          className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center" style={{ backgroundColor: `${segColor}15`, border: `1px solid ${segColor}30` }}>
+                          <CheckCircle2 className="w-8 h-8" style={{ color: segColor }} />
+                        </motion.div>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
+                        <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                      </div>
+                    )}
+
+                    {/* Narration */}
+                    {slide.type === 'narration' && (
+                      <NarrationSlide 
+                        scenes={slide.scenes || []} 
+                        onComplete={handleNext}
+                        title={slide.title}
+                      />
+                    )}
+                  </>
                 )}
 
                 {/* Video */}
@@ -238,6 +339,7 @@ export default function ProtocolPlayer() {
                     {slide.type === 'reflection' && (
                       <div className="mt-4">
                         <textarea placeholder={slide.placeholder || 'Type your answer...'}
+                          onChange={(e) => setInput(slide.id, e.target.value)}
                           className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none" />
                       </div>
                     )}
@@ -250,14 +352,14 @@ export default function ProtocolPlayer() {
 
         {/* Footer */}
         <div className="px-4 sm:px-6 py-3 border-t border-white/5 flex justify-between items-center shrink-0 bg-[#050505]">
-          <button onClick={handlePrev} disabled={currentSlideIndex === 0}
+          <button onClick={handlePrev} disabled={currentSlideIndex === 0 || isGenerating}
             className="flex items-center gap-1.5 text-white/30 hover:text-white transition-colors disabled:invisible text-sm font-bold">
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
-          <button onClick={handleNext}
+          <button onClick={handleNext} disabled={isGenerating}
             className="flex items-center gap-2 text-black px-6 py-3 rounded-xl font-black text-sm hover:scale-[1.02] active:scale-[0.97] transition-all"
-            style={{ backgroundColor: segColor, boxShadow: `0 0 20px ${segColor}30` }}>
-            {isLast ? 'Complete' : 'Continue'} <ArrowRight className="w-4 h-4" />
+            style={{ backgroundColor: isLast && showBlueprint ? '#10b981' : segColor, boxShadow: `0 0 20px ${isLast && showBlueprint ? '#10b981' : segColor}30` }}>
+            {isLast ? (showBlueprint ? 'Finish Mission' : 'Generate Blueprint') : 'Continue'} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

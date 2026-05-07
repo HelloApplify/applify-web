@@ -8,7 +8,7 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
   duration: '20-25 mins',
   level: 1,
   slides: [
-    // === HOOK ===
+    // ═══ HOOK ═══
     { id: 'h1', type: 'content', segment: 'hook', title: 'What if everything you know about learning... is wrong?',
       content: 'Most people think some people are just "naturally smart." They believe you either get it quickly, or you don\'t.\n\nBut science tells a completely different story.' },
     { id: 'h2', type: 'poll', segment: 'hook', title: 'Quick check-in',
@@ -20,7 +20,7 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
         { label: '🤷 I wing it and hope for the best' }
       ] },
 
-    // --- NARRATION: Why learning feels broken ---
+    // ─── NARRATION: Why learning feels broken ───
     { id: 'n1', type: 'narration', segment: 'hook', title: 'Why learning feels broken',
       scenes: [
         { text: 'Think about the last time you tried to learn something new.', icon: 'brain', highlight: 'learn something new' },
@@ -35,13 +35,13 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     { id: 'h4', type: 'content', segment: 'hook', title: 'By the end of this protocol, you will:',
       content: '✅ Understand why you forget 80% of what you read\n\n✅ Know the one technique that 10x\'s retention\n\n✅ Build your personal "never forget" system\n\n✅ Apply this to any skill you\'re learning right now' },
 
-    // === LEARN: ENCODING ===
+    // ═══ LEARN: ENCODING ═══
     { id: 'l1', type: 'content', segment: 'learn', title: 'Think of your brain like a phone.',
       content: 'When you take a photo, your phone saves it in a specific format — .jpg, .png, etc.\n\nYour brain does the same thing. It "saves" information in specific formats.\n\nThe format you use determines whether you remember it... or lose it.' },
     { id: 'l2', type: 'visual', segment: 'learn', title: 'Your brain has 3 save formats.',
       visualComponent: 'BrainEncoder', content: 'Watch how each one works.' },
 
-    // --- NARRATION: The 3 encoding formats explained ---
+    // ─── NARRATION: The 3 encoding formats explained ───
     { id: 'n2', type: 'narration', segment: 'learn', title: 'How your memory actually saves information',
       scenes: [
         { text: 'Your brain has three different ways to save information. Think of them like file formats on your computer.', icon: 'brain', highlight: 'three different ways' },
@@ -72,13 +72,13 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     { id: 'l_check', type: 'checkpoint', segment: 'learn', title: '🏁 Checkpoint',
       content: 'You now understand the 3 encoding formats.\n\nBut here\'s the problem — even with the best encoding, your brain has a built-in delete button.\n\nLet\'s talk about that next.' },
 
-    // === LEARN: FORGETTING CURVE ===
+    // ═══ LEARN: FORGETTING CURVE ═══
     { id: 'f1', type: 'content', segment: 'learn', title: 'Meet your brain\'s worst feature.',
       content: 'In 1885, a psychologist named Hermann Ebbinghaus discovered something terrifying.\n\nAfter learning something new, your brain starts DELETING it almost immediately.' },
     { id: 'f2', type: 'visual', segment: 'learn', title: 'The Forgetting Curve', visualComponent: 'ForgettingCurve',
       content: 'Watch what happens to your memory over time — then see the fix.' },
 
-    // --- NARRATION: The forgetting curve and the fix ---
+    // ─── NARRATION: The forgetting curve and the fix ───
     { id: 'n3', type: 'narration', segment: 'learn', title: 'Your brain\'s delete button (and how to disable it)',
       scenes: [
         { text: 'Here\'s something most people don\'t know. After you learn something new, your brain immediately starts erasing it.', icon: 'brain', highlight: 'starts erasing it' },
@@ -98,13 +98,13 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
         { label: 'Next week sometime', isCorrect: false, feedback: 'By next week, you\'ve already lost 90%. Way too late.' }
       ] },
 
-    // === PRACTICE: ACTIVE RECALL ===
+    // ═══ PRACTICE: ACTIVE RECALL ═══
     { id: 'r1', type: 'content', segment: 'practice', title: 'The #1 study mistake.',
       content: 'Re-reading. Highlighting. Reviewing notes.\n\nThese all FEEL productive. But they\'re all passive.\n\nIt\'s like watching someone else work out and expecting to get stronger.' },
     { id: 'r2', type: 'visual', segment: 'practice', title: 'Recognition vs. Recall', visualComponent: 'RecallVsRecognition',
       content: 'There\'s a massive difference between these two.' },
 
-    // --- NARRATION: Active recall explained ---
+    // ─── NARRATION: Active recall explained ───
     { id: 'n4', type: 'narration', segment: 'practice', title: 'The difference between thinking you know and actually knowing',
       scenes: [
         { text: 'There\'s a trap that almost every learner falls into. It\'s called the illusion of competence.', icon: 'eye', highlight: 'illusion of competence' },
@@ -130,13 +130,13 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
         { label: 'Highlight everything important in yellow', isCorrect: false, feedback: 'Highlighting gives the illusion of learning. Research shows it has almost zero effect.' }
       ] },
 
-    // === PRACTICE: FEYNMAN TECHNIQUE ===
+    // ═══ PRACTICE: FEYNMAN TECHNIQUE ═══
     { id: 'fe1', type: 'content', segment: 'practice', title: 'The technique that made a Nobel Prize winner.',
       content: 'Richard Feynman won a Nobel Prize in Physics.\n\nBut his real superpower wasn\'t being a genius — it was his METHOD for learning ANYTHING.\n\nHe said: "If you can\'t explain it to a 12-year-old, you don\'t understand it."' },
     { id: 'fe2', type: 'visual', segment: 'practice', title: 'The Feynman Technique', visualComponent: 'FeynmanSteps',
       content: '4 steps to understand anything deeply.' },
 
-    // --- NARRATION: Feynman Technique deep dive ---
+    // ─── NARRATION: Feynman Technique deep dive ───
     { id: 'n5', type: 'narration', segment: 'practice', title: 'The Feynman Method: learn anything in 4 steps',
       scenes: [
         { text: 'Richard Feynman was one of the most brilliant physicists who ever lived. But his real genius wasn\'t physics. It was his method for learning.', icon: 'sparkles', highlight: 'method for learning' },
@@ -155,8 +155,8 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     { id: 'p_check', type: 'checkpoint', segment: 'practice', title: '🔥 You\'re crushing it.',
       content: 'You now know Active Recall, Spaced Repetition, and the Feynman Technique.\n\nThese three tools alone put you ahead of 95% of learners.\n\nOne more section to go — let\'s make this real.' },
 
-    // === APPLY ===
-    // --- NARRATION: Putting it all together ---
+    // ═══ APPLY ═══
+    // ─── NARRATION: Putting it all together ───
     { id: 'n6', type: 'narration', segment: 'apply', title: 'Your new learning operating system',
       scenes: [
         { text: 'Let\'s pull everything together. You now have four powerful tools in your arsenal.', icon: 'shield', highlight: 'four powerful tools' },

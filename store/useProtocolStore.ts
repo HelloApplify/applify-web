@@ -38,11 +38,13 @@ interface ProtocolState {
   currentSlideIndex: number
   isModalOpen: boolean
   completedProtocols: string[]
+  userInputs: Record<string, string>
   startProtocol: (protocol: Protocol) => void
   nextSlide: () => void
   prevSlide: () => void
   goToSlide: (index: number) => void
   completeProtocol: (id: string) => void
+  setInput: (slideId: string, value: string) => void
   closeModal: () => void
 }
 
@@ -51,7 +53,8 @@ export const useProtocolStore = create<ProtocolState>((set) => ({
   currentSlideIndex: 0,
   isModalOpen: false,
   completedProtocols: [],
-  startProtocol: (protocol) => set({ activeProtocol: protocol, currentSlideIndex: 0, isModalOpen: true }),
+  userInputs: {},
+  startProtocol: (protocol) => set({ activeProtocol: protocol, currentSlideIndex: 0, isModalOpen: true, userInputs: {} }),
   nextSlide: () => set((state) => ({ 
     currentSlideIndex: Math.min(state.currentSlideIndex + 1, (state.activeProtocol?.slides.length || 1) - 1) 
   })),
@@ -64,5 +67,8 @@ export const useProtocolStore = create<ProtocolState>((set) => ({
       ? state.completedProtocols
       : [...state.completedProtocols, id]
   })),
-  closeModal: () => set({ activeProtocol: null, currentSlideIndex: 0, isModalOpen: false })
+  setInput: (slideId, value) => set((state) => ({
+    userInputs: { ...state.userInputs, [slideId]: value }
+  })),
+  closeModal: () => set({ activeProtocol: null, currentSlideIndex: 0, isModalOpen: false, userInputs: {} })
 }))

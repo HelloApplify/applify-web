@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import AdminVideoProducer from '@/components/AdminVideoProducer'
+import AdminDashboard from '@/components/AdminDashboard'
 
 export default function AdminPage() {
   const supabase = createClient()
@@ -31,7 +31,9 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-[#050505]">
-      <AdminVideoProducer />
+      <AdminDashboard />
     </main>
   )
 }
+
+
