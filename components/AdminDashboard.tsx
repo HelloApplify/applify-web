@@ -12,9 +12,12 @@ import {
 import { PROTOCOLS } from '@/data/protocols'
 import { Protocol, ProtocolSlide } from '@/store/useProtocolStore'
 
+import { createClient } from '@/utils/supabase/client'
+
 type AdminTab = 'orchestrator' | 'curator' | 'users' | 'settings';
 
 export default function AdminDashboard() {
+  const supabase = createClient()
   const [activeTab, setActiveTab] = useState<AdminTab>('orchestrator')
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol>(PROTOCOLS[0])
   const [slides, setSlides] = useState<ProtocolSlide[]>(PROTOCOLS[0].slides)
@@ -25,21 +28,26 @@ export default function AdminDashboard() {
   const [imagePrompt, setImagePrompt] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
-  // Media Library (Mocked generated assets)
-  const [mediaLibrary, setMediaLibrary] = useState([
-    { id: 'm1', name: 'Brain Encoding Explainer', type: 'video', url: '#', date: '2h ago', size: '12.4 MB' },
-    { id: 'm2', name: 'Spaced Repetition Loop', type: 'video', url: '#', date: '5h ago', size: '8.1 MB' },
-    { id: 'm3', name: 'Cartoon Mentor Avatar', type: 'image', url: '#', date: '1d ago', size: '2.2 MB' },
-  ])
+  // Real Data State
+  const [users, setUsers] = useState<any[]>([])
+  const [mediaLibrary, setMediaLibrary] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Enhanced Mock User Data
-  const [users, setUsers] = useState([
-    { id: '1', name: 'Jacob Yakhontov', email: 'helloapplify@gmail.com', status: 'Active', plan: 'Founder', joined: '2026-05-05', lastActive: 'Now', progress: 85, sessions: 24, device: 'Desktop' },
-    { id: '2', name: 'Sarah Chen', email: 'sarah@example.com', status: 'Active', plan: 'Mastery', joined: '2026-04-30', lastActive: '10 mins ago', progress: 42, sessions: 12, device: 'Mobile' },
-    { id: '3', name: 'Mike Ross', email: 'mike.r@gmail.com', status: 'Inactive', plan: 'Free', joined: '2026-04-12', lastActive: '2 days ago', progress: 12, sessions: 3, device: 'Tablet' },
-    { id: '4', name: 'Elena Rodriguez', email: 'elena@startup.io', status: 'Active', plan: 'Founder', joined: '2026-05-04', lastActive: '1 hour ago', progress: 98, sessions: 45, device: 'Desktop' },
-    { id: '5', name: 'David Smith', email: 'david.s@gmail.com', status: 'Active', plan: 'Mastery', joined: '2026-05-06', lastActive: '4 hours ago', progress: 5, sessions: 1, device: 'Mobile' },
-  ])
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      // Try to fetch real users from profiles table
+      const { data: profileData } = await supabase.from('profiles').select('*')
+      if (profileData) setUsers(profileData)
+      
+      // Fetch media if you have a media table, else keep empty
+      const { data: mediaData } = await supabase.from('media_vault').select('*')
+      if (mediaData) setMediaLibrary(mediaData)
+      
+      setIsLoading(false)
+    }
+    fetchData()
+  }, [supabase])
 
   const handleProtocolSelect = (proto: Protocol) => {
     setSelectedProtocol(proto)
@@ -76,11 +84,7 @@ export default function AdminDashboard() {
       })
       if (response.ok) {
         setStatus('success')
-        // Add to mock library
-        setMediaLibrary([
-          { id: Math.random().toString(), name: 'New Asset ' + (mediaLibrary.length + 1), type: 'video', url: '#', date: 'Just now', size: '--' },
-          ...mediaLibrary
-        ])
+        // Success, real data will be updated on next fetch or via realtime subscriptions
       }
       else setStatus('error')
     } catch { setStatus('error') }
@@ -209,7 +213,11 @@ export default function AdminDashboard() {
                           <button className="text-[10px] font-black text-blue-400 hover:text-blue-300">View All</button>
                         </div>
                         <div className="space-y-3">
-                          {mediaLibrary.map((item) => (
+                          {mediaLibrary.length === 0 ? (
+                            <div className="py-10 text-center border border-dashed border-white/5 rounded-2xl">
+                              <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Vault Empty</p>
+                            </div>
+                          ) : mediaLibrary.map((item) => (
                             <div key={item.id} className="p-4 rounded-2xl bg-black/40 border border-white/5 flex items-center gap-4 group hover:border-white/20 transition-all">
                               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-blue-600/20 transition-colors">
                                 {item.type === 'video' ? <Video className="w-5 h-5 text-white/30 group-hover:text-blue-400" /> : <ImageIcon className="w-5 h-5 text-white/30 group-hover:text-blue-400" />}
@@ -227,9 +235,9 @@ export default function AdminDashboard() {
                       <div className="p-6 rounded-[2rem] bg-gradient-to-br from-indigo-600/10 to-blue-600/10 border border-blue-500/10 space-y-2">
                         <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Quota Usage</p>
                         <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
-                          <div className="h-full bg-blue-500 w-[65%]" />
+                          <div className="h-full bg-blue-500 w-[0%]" />
                         </div>
-                        <p className="text-[9px] text-white/40 font-bold">65% of monthly production limit used</p>
+                        <p className="text-[9px] text-white/40 font-bold">0% of monthly production limit used</p>
                       </div>
                     </div>
                   </div>
@@ -247,17 +255,17 @@ export default function AdminDashboard() {
                       <button className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-bold flex items-center gap-2 hover:bg-white/10 transition-all"><Download className="w-3.5 h-3.5" /> Export CSV</button>
                       <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-2.5 flex items-center gap-3">
                         <Activity className="w-4 h-4 text-emerald-500" />
-                        <span className="text-[11px] font-bold text-white/70">12 Online</span>
+                        <span className="text-[11px] font-bold text-white/70">{users.length > 0 ? 1 : 0} Online</span>
                       </div>
                     </div>
                   </header>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[
-                      { label: 'Platform Revenue', value: '$12,480', color: 'text-white', sub: '+18% growth' },
-                      { label: 'Active Retention', value: '94.2%', color: 'text-emerald-400', sub: 'Last 30 days' },
-                      { label: 'Avg Mastery', value: '72%', color: 'text-blue-400', sub: 'Across protocols' },
-                      { label: 'New Signups', value: '142', color: 'text-purple-400', sub: 'This month' },
+                      { label: 'Platform Revenue', value: '$0', color: 'text-white', sub: '0% growth' },
+                      { label: 'Active Retention', value: '0%', color: 'text-emerald-400', sub: 'Last 30 days' },
+                      { label: 'Avg Mastery', value: '0%', color: 'text-blue-400', sub: 'Across protocols' },
+                      { label: 'New Signups', value: users.length.toString(), color: 'text-purple-400', sub: 'All time' },
                     ].map((stat, i) => (
                       <div key={i} className="p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 relative overflow-hidden group shadow-xl">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -298,47 +306,53 @@ export default function AdminDashboard() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">
-                          {users.map((u) => (
+                          {users.length === 0 ? (
+                            <tr>
+                              <td colSpan={6} className="px-8 py-20 text-center text-white/20 font-bold italic">
+                                No members have joined the protocol yet.
+                              </td>
+                            </tr>
+                          ) : users.map((u) => (
                             <tr key={u.id} className="group hover:bg-white/[0.01] transition-all">
                               <td className="px-8 py-6">
                                 <div className="flex items-center gap-4">
                                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600/40 to-indigo-600/40 border border-white/10 flex items-center justify-center text-sm font-black shadow-lg">
-                                    {u.name.split(' ').map(n => n[0]).join('')}
+                                    {(u.full_name || u.email || 'U').split(' ').map((n: string) => n[0]).join('')}
                                   </div>
                                   <div>
-                                    <p className="text-sm font-bold text-white/90">{u.name}</p>
+                                    <p className="text-sm font-bold text-white/90">{u.full_name || 'Anonymous User'}</p>
                                     <p className="text-[10px] text-white/20 font-mono mt-0.5">{u.email}</p>
-                                    <p className="text-[9px] text-white/40 font-bold uppercase tracking-tighter mt-1">Joined {u.joined}</p>
+                                    <p className="text-[9px] text-white/40 font-bold uppercase tracking-tighter mt-1">Joined {u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</p>
                                   </div>
                                 </div>
                               </td>
                               <td className="px-8 py-6">
                                 <div className="flex items-center gap-2.5">
                                   <div className={`w-2 h-2 rounded-full ${u.plan === 'Founder' ? 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]'}`} />
-                                  <span className="text-xs font-black tracking-tight text-white/70 uppercase">{u.plan}</span>
+                                  <span className="text-xs font-black tracking-tight text-white/70 uppercase">{u.plan || 'Free'}</span>
                                 </div>
                               </td>
                               <td className="px-8 py-6">
                                 <div className="space-y-1.5">
                                   <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${u.status === 'Active' ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-500' : 'border-white/10 bg-white/5 text-white/20'}`}>
-                                    {u.status}
+                                    {u.status || 'Offline'}
                                   </span>
-                                  <p className="text-[9px] text-white/30 font-bold ml-1">{u.lastActive}</p>
+                                  <p className="text-[9px] text-white/30 font-bold ml-1">{u.last_active || 'Never'}</p>
                                 </div>
                               </td>
                               <td className="px-8 py-6">
                                 <div className="space-y-2">
                                   <div className="w-36 h-2 rounded-full bg-white/5 overflow-hidden shadow-inner">
-                                    <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full" style={{ width: `${u.progress}%` }} />
+                                    <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full" style={{ width: `${u.progress || 0}%` }} />
                                   </div>
                                   <div className="flex justify-between items-center w-36">
-                                    <p className="text-[9px] font-black text-white/30">{u.progress}% Protocol Completion</p>
-                                    <p className="text-[9px] font-black text-white/50">{u.sessions} Sessions</p>
+                                    <p className="text-[9px] font-black text-white/30">{u.progress || 0}% Protocol Completion</p>
+                                    <p className="text-[9px] font-black text-white/50">{u.sessions || 0} Sessions</p>
                                   </div>
                                 </div>
                               </td>
                               <td className="px-8 py-6">
-                                <span className="text-[10px] font-bold text-white/30 uppercase">{u.device}</span>
+                                <span className="text-[10px] font-bold text-white/30 uppercase">{u.device || 'Unknown'}</span>
                               </td>
                               <td className="px-8 py-6 text-right">
                                 <button className="p-3 rounded-xl text-white/10 hover:text-white hover:bg-white/5 transition-all"><MoreHorizontal className="w-5 h-5" /></button>
