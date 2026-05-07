@@ -8,6 +8,7 @@ export interface NarrationScene {
   text: string
   icon?: string
   highlight?: string
+  storyVisual?: string
 }
 
 export interface ProtocolSlide {

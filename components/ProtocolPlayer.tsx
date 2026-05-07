@@ -142,7 +142,7 @@ export default function ProtocolPlayer() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto min-h-0 relative">
           <AmbientBackground />
-          <div className="max-w-lg mx-auto w-full px-5 sm:px-8 py-6 sm:py-10 relative z-10">
+          <div className="max-w-4xl mx-auto w-full px-4 sm:px-12 py-6 sm:py-16 relative z-10">
             <AnimatePresence mode="wait">
               <motion.div key={slide.id}
                 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}

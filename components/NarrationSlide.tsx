@@ -3,10 +3,21 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, Volume2, VolumeX, Brain, Eye, Music, Zap, Target, BookOpen, Sparkles, Shield, RefreshCw } from 'lucide-react'
 import { NarrationScene, useProtocolStore } from '@/store/useProtocolStore'
+import * as StoryVisuals from '@/components/visuals/StoryVisuals'
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   brain: Brain, eye: Eye, music: Music, zap: Zap, target: Target,
   book: BookOpen, sparkles: Sparkles, shield: Shield, refresh: RefreshCw
+}
+
+const STORY_VISUALS: Record<string, React.ComponentType> = {
+  BrainBox: StoryVisuals.BrainBox,
+  NeuralGrowth: StoryVisuals.NeuralGrowth,
+  MemoryEraser: StoryVisuals.MemoryEraser,
+  InfoTrap: StoryVisuals.InfoTrap,
+  Breakthrough: StoryVisuals.Breakthrough,
+  SpacedWaves: StoryVisuals.SpacedWaves,
+  Simplicity: StoryVisuals.Simplicity
 }
 
 interface Props {
@@ -15,7 +26,7 @@ interface Props {
   onComplete?: () => void
 }
 
-const SCENE_DURATION = 5000 // Fallback duration for silent mode
+const SCENE_DURATION = 5000 
 
 export default function NarrationSlide({ title, scenes, onComplete }: Props) {
   const { voiceEngine, elevenLabsVoiceId } = useProtocolStore()
@@ -75,7 +86,6 @@ export default function NarrationSlide({ title, scenes, onComplete }: Props) {
       }
     }
 
-    // Browser Fallback
     const utt = new SpeechSynthesisUtterance(scenes[idx].text)
     utt.rate = 1.0
     const voices = window.speechSynthesis.getVoices()
@@ -107,128 +117,131 @@ export default function NarrationSlide({ title, scenes, onComplete }: Props) {
 
   const scene = scenes[currentScene]
   const Icon = scene?.icon ? ICONS[scene.icon] : Brain
+  const Visual = scene?.storyVisual ? STORY_VISUALS[scene.storyVisual] : null
 
   return (
-    <div className="relative w-full aspect-square sm:aspect-video rounded-[2.5rem] overflow-hidden bg-[#050505] border border-white/5 shadow-2xl group">
+    <div className="relative w-full min-h-[60vh] sm:min-h-[70vh] rounded-[3rem] overflow-hidden bg-[#050505] border border-white/5 shadow-2xl flex flex-col">
       {/* Ambient Background Glow */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity }}
-          className="absolute -top-1/4 -left-1/4 w-full h-full bg-blue-600/30 blur-[120px] rounded-full" 
+          className="absolute -top-1/4 -left-1/4 w-full h-full bg-blue-600/20 blur-[120px] rounded-full" 
         />
         <motion.div 
           animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-          className="absolute -bottom-1/4 -right-1/4 w-full h-full bg-emerald-600/30 blur-[150px] rounded-full" 
+          className="absolute -bottom-1/4 -right-1/4 w-full h-full bg-emerald-600/20 blur-[150px] rounded-full" 
         />
       </div>
 
-      {/* Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white/10 rounded-full"
-            initial={{ x: Math.random() * 100 + "%", y: Math.random() * 100 + "%" }}
-            animate={{ 
-              y: ["0%", "100%"],
-              opacity: [0, 1, 0]
-            }}
-            transition={{ duration: Math.random() * 10 + 10, repeat: Infinity, ease: "linear" }}
-          />
-        ))}
-      </div>
-
-      {/* Main Content Layer */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center p-8 sm:p-12 z-10">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10">
         {!hasStarted ? (
-          <button onClick={handlePlay} className="group flex flex-col items-center gap-6">
+          <button onClick={handlePlay} className="group flex flex-col items-center gap-8">
             <motion.div 
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.4)] border border-blue-400/30"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-32 h-32 rounded-full bg-blue-600 flex items-center justify-center shadow-[0_0_60px_rgba(37,99,235,0.4)] border border-blue-400/30"
             >
-              <Play className="w-10 h-10 text-white fill-current ml-1" />
+              <Play className="w-14 h-14 text-white fill-current ml-2" />
             </motion.div>
             <div className="text-center">
-              <h3 className="text-xl font-black text-white tracking-tight mb-1">Start Presentation</h3>
-              <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Touch to begin immersion</p>
+              <h3 className="text-2xl font-black text-white tracking-tight mb-2 uppercase italic">Initialize Immersion</h3>
+              <p className="text-xs font-bold text-white/30 uppercase tracking-[0.3em]">High Fidelity Neural Audio Ready</p>
             </div>
           </button>
         ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentScene}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.1, y: -20 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full flex flex-col items-center text-center space-y-8"
-            >
-              {/* Animated Icon Container */}
-              <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full animate-pulse" />
-                <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-white/5 to-white/10 border border-white/10 flex items-center justify-center relative z-10 backdrop-blur-md">
-                  {Icon && <Icon className="w-12 h-12 text-white" strokeWidth={1.5} />}
-                </div>
-              </motion.div>
+          <div className="w-full h-full flex flex-col items-center justify-center gap-12 sm:gap-16">
+             {/* Story Visual Area */}
+             <div className="flex-1 flex items-center justify-center w-full">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentScene + (scene.storyVisual || 'default')}
+                    initial={{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, scale: 1.2, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative"
+                  >
+                    {Visual ? (
+                      <Visual />
+                    ) : (
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse" />
+                        <div className="w-40 h-40 rounded-[3rem] bg-gradient-to-tr from-white/5 to-white/10 border border-white/10 flex items-center justify-center relative z-10 backdrop-blur-xl">
+                          {Icon && <Icon className="w-20 h-20 text-white" strokeWidth={1} />}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+             </div>
 
-              {/* Premium Typography */}
-              <div className="space-y-4 max-w-xl">
-                <h3 className="text-white/30 text-[10px] font-black uppercase tracking-[0.3em]">{title}</h3>
-                <p className="text-2xl sm:text-3xl font-bold text-white leading-tight tracking-tight">
-                  {scene.text.split(' ').map((word, i) => {
-                    const isHighlighted = scene.highlight && word.toLowerCase().includes(scene.highlight.toLowerCase().split(' ')[0])
-                    return (
-                      <span key={i} className={isHighlighted ? "text-blue-400" : ""}>
-                        {word}{' '}
-                      </span>
-                    )
-                  })}
-                </p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+             {/* Caption Area */}
+             <div className="w-full max-w-2xl px-4 sm:px-0">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentScene}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                    className="space-y-4"
+                  >
+                    <h4 className="text-white/20 text-[10px] font-black uppercase tracking-[0.4em] text-center">{title}</h4>
+                    <p className="text-xl sm:text-3xl font-medium text-white leading-tight tracking-tight text-center">
+                      {scene.text.split(' ').map((word, i) => {
+                        const isHighlighted = scene.highlight && word.toLowerCase().includes(scene.highlight.toLowerCase().split(' ')[0])
+                        return (
+                          <span key={i} className={isHighlighted ? "text-blue-400 font-bold" : "text-white/90"}>
+                            {word}{' '}
+                          </span>
+                        )
+                      })}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+             </div>
+          </div>
         )}
       </div>
 
-      {/* Controls / Progress Overlay */}
+      {/* Footer Controls */}
       {hasStarted && (
-        <div className="absolute bottom-8 left-0 right-0 px-12 z-20 flex items-center justify-between gap-6">
-          <div className="flex-1 flex gap-1.5">
-            {scenes.map((_, i) => (
-              <div key={i} className="h-1 rounded-full bg-white/5 overflow-hidden flex-1 min-w-[10px]">
-                <motion.div 
-                  className="h-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
-                  initial={{ width: "0%" }}
-                  animate={{ width: i < currentScene ? "100%" : i === currentScene ? "100%" : "0%" }}
-                  transition={{ duration: i === currentScene ? SCENE_DURATION / 1000 : 0.3, ease: "linear" }}
-                />
+        <div className="p-8 sm:p-12 pt-0 z-20 w-full">
+           <div className="flex items-center justify-between gap-8 bg-white/[0.03] border border-white/5 p-4 rounded-3xl backdrop-blur-md">
+              <div className="flex-1 flex gap-2">
+                {scenes.map((_, i) => (
+                  <div key={i} className="h-1.5 rounded-full bg-white/5 overflow-hidden flex-1 relative">
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                      initial={{ width: "0%" }}
+                      animate={{ width: i < currentScene ? "100%" : i === currentScene ? "100%" : "0%" }}
+                      transition={{ duration: i === currentScene ? SCENE_DURATION / 1000 : 0.3, ease: "linear" }}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={handlePlay}
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
-            >
-              {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white ml-0.5" />}
-            </button>
-            <button onClick={() => setIsMuted(!isMuted)} className="w-10 h-10 flex items-center justify-center text-white/40 hover:text-white transition-colors">
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            </button>
-          </div>
+              
+              <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                <button onClick={() => setIsMuted(!isMuted)} className="w-10 h-10 flex items-center justify-center text-white/30 hover:text-white transition-colors">
+                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </button>
+                <button 
+                  onClick={handlePlay}
+                  className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
+                >
+                  {isPlaying ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white ml-0.5" />}
+                </button>
+              </div>
+           </div>
         </div>
       )}
 
-      {/* Scanline / Grain Overlay */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] opacity-20" />
+      {/* Cinematic Overlays */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%)] bg-[length:100%_4px] opacity-10" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
     </div>
   )
 }

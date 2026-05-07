@@ -26,12 +26,12 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     // ─── NARRATION: Why learning feels broken ───
     { id: 'n1', type: 'narration', segment: 'hook', title: 'Why learning feels broken',
       scenes: [
-        { text: 'Think about the last time you tried to learn something new.', icon: 'brain', highlight: 'learn something new' },
+        { text: 'Think about the last time you tried to learn something new.', icon: 'brain', highlight: 'learn something new', storyVisual: 'NeuralGrowth' },
         { text: 'Maybe it was a new skill for work. Or a language. Or something you saw on YouTube that looked interesting.', icon: 'eye' },
         { text: 'You probably spent hours reading, watching videos, taking notes. And it felt productive, right?', icon: 'book', highlight: 'felt productive' },
-        { text: 'But then a week later, someone asks you about it. And you can barely remember anything.', icon: 'brain', highlight: 'barely remember' },
+        { text: 'But then a week later, someone asks you about it. And you can barely remember anything.', icon: 'brain', highlight: 'barely remember', storyVisual: 'MemoryEraser' },
         { text: 'This isn\'t your fault. Your brain was never designed to learn the way most people try to learn.', icon: 'zap', highlight: 'never designed' },
-        { text: 'The good news? Once you understand how your brain actually processes information, everything changes.', icon: 'sparkles', highlight: 'everything changes' },
+        { text: 'The good news? Once you understand how your brain actually processes information, everything changes.', icon: 'sparkles', highlight: 'everything changes', storyVisual: 'NeuralGrowth' },
         { text: 'In the next few minutes, you\'re going to learn the exact system that top performers use. And it\'s simpler than you think.', icon: 'target', highlight: 'exact system' }
       ] },
 
@@ -84,12 +84,12 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     // ─── NARRATION: The forgetting curve and the fix ───
     { id: 'n3', type: 'narration', segment: 'learn', title: 'Your brain\'s delete button (and how to disable it)',
       scenes: [
-        { text: 'Here\'s something most people don\'t know. After you learn something new, your brain immediately starts erasing it.', icon: 'brain', highlight: 'starts erasing it' },
+        { text: 'Here\'s something most people don\'t know. After you learn something new, your brain immediately starts erasing it.', icon: 'brain', highlight: 'starts erasing it', storyVisual: 'MemoryEraser' },
         { text: 'After just twenty minutes, you\'ve already lost forty percent of what you learned. After one day, seventy percent is gone.', icon: 'zap', highlight: 'seventy percent' },
         { text: 'After a week? Ninety percent has vanished. That book you read last month? You probably remember less than ten percent.', icon: 'brain', highlight: 'Ninety percent' },
-        { text: 'But here\'s the breakthrough. Scientists discovered that if you review information at specific intervals, the forgetting curve flattens.', icon: 'target', highlight: 'specific intervals' },
+        { text: 'But here\'s the breakthrough. Scientists discovered that if you review information at specific intervals, the forgetting curve flattens.', icon: 'target', highlight: 'specific intervals', storyVisual: 'Breakthrough' },
         { text: 'This is called Spaced Repetition. Each review makes the memory stronger and longer-lasting.', icon: 'refresh', highlight: 'Spaced Repetition' },
-        { text: 'The magic schedule is: review within twenty four hours, then after three days, then seven days, then thirty days.', icon: 'sparkles', highlight: 'magic schedule' },
+        { text: 'The magic schedule is: review within twenty four hours, then after three days, then seven days, then thirty days.', icon: 'sparkles', highlight: 'magic schedule', storyVisual: 'SpacedWaves' },
         { text: 'After those four reviews, the memory becomes essentially permanent. Four touches. That\'s all it takes.', icon: 'shield', highlight: 'essentially permanent' }
       ] },
 
@@ -110,11 +110,11 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
     // ─── NARRATION: Active recall explained ───
     { id: 'n4', type: 'narration', segment: 'practice', title: 'The difference between thinking you know and actually knowing',
       scenes: [
-        { text: 'There\'s a trap that almost every learner falls into. It\'s called the illusion of competence.', icon: 'eye', highlight: 'illusion of competence' },
+        { text: 'There\'s a trap that almost every learner falls into. It\'s called the illusion of competence.', icon: 'eye', highlight: 'illusion of competence', storyVisual: 'BrainBox' },
         { text: 'Here\'s how it works. You read your notes. You see familiar words. Your brain says, "Oh yeah, I know this." But you don\'t.', icon: 'brain', highlight: 'you don\'t' },
-        { text: 'That feeling of familiarity is called Recognition. It\'s your brain being lazy. It recognizes the information, but it can\'t actually retrieve it.', icon: 'eye', highlight: 'Recognition' },
+        { text: 'That feeling of familiarity is called Recognition. It\'s your brain being lazy. It recognizes the information, but it can\'t actually retrieve it.', icon: 'eye', highlight: 'Recognition', storyVisual: 'InfoTrap' },
         { text: 'Real learning requires Recall. That means pulling information from your memory with zero hints. No notes. No peeking.', icon: 'zap', highlight: 'Recall' },
-        { text: 'The struggle you feel when trying to remember something? That struggle is literally building stronger neural connections.', icon: 'brain', highlight: 'stronger neural connections' },
+        { text: 'The struggle you feel when trying to remember something? That struggle is literally building stronger neural connections.', icon: 'brain', highlight: 'stronger neural connections', storyVisual: 'NeuralGrowth' },
         { text: 'Scientists call this desirable difficulty. The harder it is to recall, the stronger the memory becomes when you finally do.', icon: 'sparkles', highlight: 'desirable difficulty' },
         { text: 'So the next time something feels hard to remember, don\'t reach for your notes. Sit with the struggle. That\'s where the magic happens.', icon: 'target', highlight: 'That\'s where the magic happens' }
       ] },
@@ -144,11 +144,11 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
       scenes: [
         { text: 'Richard Feynman was one of the most brilliant physicists who ever lived. But his real genius wasn\'t physics. It was his method for learning.', icon: 'sparkles', highlight: 'method for learning' },
         { text: 'Step one: Pick a concept you want to understand. It doesn\'t matter how complex it is.', icon: 'target', highlight: 'Step one' },
-        { text: 'Step two: Explain it out loud as if you\'re teaching a twelve year old. Use simple words. No jargon. No shortcuts.', icon: 'book', highlight: 'Step two' },
-        { text: 'Step three: Notice where you get stuck. The places where you stumble or use vague language? Those are the gaps in your understanding.', icon: 'eye', highlight: 'Step three' },
+        { text: 'Step two: Explain it out loud as if you\'re teaching a twelve year old. Use simple words. No jargon. No shortcuts.', icon: 'book', highlight: 'Step two', storyVisual: 'Simplicity' },
+        { text: 'Step three: Notice where you get stuck. The places where you stumble or use vague language? Those are the gaps in your understanding.', icon: 'eye', highlight: 'Step three', storyVisual: 'InfoTrap' },
         { text: 'Step four: Go back and fill those gaps. Then simplify your explanation again. Keep going until a child could understand it.', icon: 'refresh', highlight: 'Step four' },
         { text: 'Why does this work? Because simplicity is the ultimate test of understanding. If you can\'t explain it simply, you don\'t truly know it.', icon: 'brain', highlight: 'simplicity is the ultimate test' },
-        { text: 'The best part? You can use this for anything. Coding, business, psychology, cooking, investing. Everything becomes learnable.', icon: 'zap', highlight: 'Everything becomes learnable' }
+        { text: 'The best part? You can use this for anything. Coding, business, psychology, cooking, investing. Everything becomes learnable.', icon: 'zap', highlight: 'Everything becomes learnable', storyVisual: 'Breakthrough' }
       ] },
 
     { id: 'fe3', type: 'reflection', segment: 'practice', title: 'Your turn.',
