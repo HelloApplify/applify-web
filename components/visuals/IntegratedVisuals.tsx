@@ -185,3 +185,66 @@ export const GrowthMatrix = ({ title, content, children }: IntegratedProps) => {
     </div>
   )
 }
+
+// 5. The Quantum Reveal (For Checkpoints/Milestones)
+// Text is revealed by a particle field
+export const QuantumReveal = ({ title, content, children }: IntegratedProps) => {
+  const { x, y } = useMousePosition()
+  const mouseX = useTransform(x, [-0.5, 0.5], [-60, 60])
+  const mouseY = useTransform(y, [-0.5, 0.5], [-60, 60])
+
+  return (
+    <div className="relative w-full py-24 flex flex-col items-center overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          style={{ x: mouseX, y: mouseY }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-emerald-500/10 blur-[120px]"
+        />
+        
+        {/* Floating Particles */}
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              y: [0, -100, 0],
+              opacity: [0, 0.4, 0],
+              scale: [0.5, 1, 0.5]
+            }}
+            transition={{
+              duration: 5 + Math.random() * 5,
+              repeat: Infinity,
+              delay: Math.random() * i * 0.1
+            }}
+            className="absolute w-1 h-1 bg-white/40 rounded-full"
+            style={{ 
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="relative z-10 text-center max-w-3xl px-6">
+        <motion.div
+          initial={{ filter: 'blur(10px)', opacity: 0 }}
+          animate={{ filter: 'blur(0px)', opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+        >
+          <h2 className="text-6xl font-black text-white mb-8 uppercase italic tracking-tighter shadow-2xl">
+            {title}
+          </h2>
+          <p className="text-2xl text-white/40 font-medium leading-relaxed max-w-2xl mx-auto mb-12 italic">
+            {content}
+          </p>
+        </motion.div>
+        
+        {children}
+      </div>
+    </div>
+  )
+}

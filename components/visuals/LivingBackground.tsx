@@ -7,89 +7,127 @@ interface LivingBackgroundProps {
   color?: string
 }
 
-const PARTICLE_COUNT = 250
+const PARTICLE_COUNT = 400
 
 export default function LivingBackground({ color = '#3b82f6' }: LivingBackgroundProps) {
   const { x: smoothX, y: smoothY } = useMousePosition()
 
-  // Generate stable random particles in a vortex pattern
-  const particles = useMemo(() => {
-    return Array.from({ length: PARTICLE_COUNT }).map((_, i) => {
-      const angle = Math.random() * Math.PI * 2
-      const radius = 2 + Math.pow(Math.random(), 0.5) * 48 // Cluster towards center
-      const x = 50 + Math.cos(angle) * radius
-      const y = 50 + Math.sin(angle) * radius
-      
-      return {
-        id: i,
-        x,
-        y,
-        size: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.3 + 0.05,
-        speed: (70 - radius) * 1.2, // Faster movement for outer particles for depth
-        color: i % 15 === 0 ? '#fbbf24' : i % 10 === 0 ? '#f472b6' : i % 7 === 0 ? '#10b981' : color
-      }
-    })
-  }, [color])
+  // Generate a vast, high-density starfield
+  const stars = useMemo(() => {
+    return Array.from({ length: PARTICLE_COUNT }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 1.5 + 0.5,
+      baseOpacity: Math.random() * 0.15 + 0.05,
+      // Random twinkle offsets
+      twinkleSpeed: 2 + Math.random() * 4,
+      twinkleDelay: Math.random() * 5
+    }))
+  }, [])
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none bg-[#050505]">
-      {/* Subtle Background Glow - reduced blur significantly */}
-      <motion.div
+      {/* Deep Silk Ambient Wash */}
+      <div 
+        className="absolute inset-0 opacity-20"
         style={{
-          x: useTransform(smoothX, [-0.5, 0.5], [-50, 50]),
-          y: useTransform(smoothY, [-0.5, 0.5], [-50, 50]),
-          backgroundColor: color,
+          background: `radial-gradient(circle at 50% 50%, ${color}10 0%, transparent 70%)`
         }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] blur-[120px] opacity-[0.07]"
       />
 
-      {/* Sharp Particle Field */}
+      {/* The Constellation Layer */}
       <div className="absolute inset-0">
-        {particles.map((p) => (
-          <Particle key={p.id} p={p} mouseX={smoothX} mouseY={smoothY} />
+        {stars.map((star) => (
+          <Star 
+            key={star.id} 
+            star={star} 
+            mouseX={smoothX} 
+            mouseY={smoothY} 
+            color={color}
+          />
         ))}
       </div>
 
-      {/* Sharp Neural Mesh Grid (Subtle) */}
+      {/* Ultra-fine mesh overlay for technical texture */}
       <div 
-        className="absolute inset-0 opacity-[0.03]" 
+        className="absolute inset-0 opacity-[0.02]" 
         style={{ 
           backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-          backgroundSize: '60px 60px'
+          backgroundSize: '48px 48px'
         }} 
       />
     </div>
   )
 }
 
-function Particle({ p, mouseX, mouseY }: { p: any, mouseX: any, mouseY: any }) {
-  // Parallax movement
-  const x = useTransform(mouseX, [-0.5, 0.5], [p.speed, -p.speed])
-  const y = useTransform(mouseY, [-0.5, 0.5], [p.speed, -p.speed])
+function Star({ star, mouseX, mouseY, color }: { star: any, mouseX: any, mouseY: any, color: string }) {
+  // Calculate distance from mouse for proximity lighting
+  // Note: x/y are 0-100%, mouseX/Y are -0.5 to 0.5 (centered)
+  // We need to normalize them to same space.
+  
+  // Create a proximity effect using framer-motion transforms
+  // Distance from center-normalized coordinates
+  const starX = (star.x - 50) / 100
+  const starY = (star.y - 50) / 100
+  
+  // This transform increases scale and opacity when the mouse is near the star
+  const proximityScale = useTransform(
+    [mouseX, mouseY],
+    ([latestX, latestY]: any[]) => {
+      const dx = latestX - starX
+      const dy = latestY - starY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      // If distance is small, return high scale, else 1
+      const influence = Math.max(0, 1 - distance * 4) // Reach of 0.25 (25% of screen)
+      return 1 + influence * 2.5
+    }
+  )
+
+  const proximityOpacity = useTransform(
+    [mouseX, mouseY],
+    ([latestX, latestY]: any[]) => {
+      const dx = latestX - starX
+      const dy = latestY - starY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      const influence = Math.max(0, 1 - distance * 5)
+      return star.baseOpacity + influence * 0.8
+    }
+  )
+
+  const glowColor = useTransform(
+    [mouseX, mouseY],
+    ([latestX, latestY]: any[]) => {
+      const dx = latestX - starX
+      const dy = latestY - starY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      const influence = Math.max(0, 1 - distance * 5)
+      return influence > 0.1 ? color : '#FFFFFF'
+    }
+  )
 
   return (
     <motion.div
       style={{
-        left: `${p.x}%`,
-        top: `${p.y}%`,
-        width: p.size,
-        height: p.size,
-        opacity: p.opacity,
-        backgroundColor: p.color,
-        x,
-        y,
+        left: `${star.x}%`,
+        top: `${star.y}%`,
+        width: star.size,
+        height: star.size,
+        scale: proximityScale,
+        opacity: proximityOpacity,
+        backgroundColor: glowColor,
+        boxShadow: proximityOpacity.get() > 0.4 ? `0 0 10px ${color}` : 'none'
       }}
       animate={{
-        scale: [1, 1.2, 1],
-        opacity: [p.opacity, p.opacity * 1.5, p.opacity],
+        opacity: [star.baseOpacity, star.baseOpacity * 1.5, star.baseOpacity]
       }}
       transition={{
-        duration: 3 + Math.random() * 4,
+        duration: star.twinkleSpeed,
         repeat: Infinity,
+        delay: star.twinkleDelay,
         ease: "easeInOut"
       }}
-      className="absolute rounded-full shadow-[0_0_8px_rgba(255,255,255,0.1)]"
+      className="absolute rounded-full"
     />
   )
 }

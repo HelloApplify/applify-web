@@ -18,9 +18,11 @@ const HabitLoop = dynamic(() => import('@/components/visuals/HabitLoop'), { ssr:
 const IdentityShift = dynamic(() => import('@/components/visuals/IdentityShift'), { ssr: false })
 const AmbientBackground = dynamic(() => import('@/components/visuals/AmbientBackground'), { ssr: false })
 const LivingBackground = dynamic(() => import('@/components/visuals/LivingBackground'), { ssr: false })
+const MemoryDecay = dynamic(() => import('@/components/visuals/MemoryDecay'), { ssr: false })
+const PhoneBattery = dynamic(() => import('@/components/visuals/PhoneBattery'), { ssr: false })
 
 // Integrated Layouts
-import { NeuralSpotlight, DataPrism, MindFortress, GrowthMatrix } from '@/components/visuals/IntegratedVisuals'
+import { NeuralSpotlight, DataPrism, MindFortress, GrowthMatrix, QuantumReveal } from '@/components/visuals/IntegratedVisuals'
 
 // Premium Fallbacks
 const QuantumGlow = dynamic(() => import('@/components/visuals/PremiumVisuals').then(mod => mod.QuantumGlow), { ssr: false })
@@ -37,7 +39,9 @@ const VISUALS: Record<string, React.ComponentType<any>> = {
   Monolith,
   NeuralWeave,
   ForgettingCurve,
-  FeynmanSteps
+  FeynmanSteps,
+  MemoryDecay,
+  PhoneBattery
 }
 
 export default function ProtocolPlayer() {
@@ -136,7 +140,7 @@ export default function ProtocolPlayer() {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto min-h-0 relative">
-          <AmbientBackground />
+          <LivingBackground color={segColor} />
           
           {/* Dopamine Feedback Glow */}
           <AnimatePresence>
@@ -247,7 +251,11 @@ export default function ProtocolPlayer() {
                     </DataPrism>
                   )}
 
-                  {(slide.type === 'content' || slide.type === 'visual' || slide.type === 'checkpoint') && (
+                  {(slide.type === 'checkpoint') && (
+                    <QuantumReveal title={slide.title} content={slide.content} />
+                  )}
+
+                  {(slide.type === 'content' || slide.type === 'visual') && (
                     <div className="py-12 sm:py-20 flex flex-col items-center text-center">
                        <motion.div 
                          initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
@@ -258,8 +266,13 @@ export default function ProtocolPlayer() {
                            {slide.visualComponent ? React.createElement(VISUALS[slide.visualComponent] || QuantumGlow) : <QuantumGlow />}
                          </div>
                          
-                         {/* Ambient Glow behind the visual */}
-                         <div className="absolute inset-0 bg-blue-500/5 blur-[80px] -z-10 rounded-full scale-150" />
+                         {/* Ambient Glow behind the visual - smoothed with radial gradient */}
+                         <div 
+                           className="absolute inset-0 -z-10 scale-150" 
+                           style={{ 
+                             background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.08) 0%, transparent 70%)'
+                           }}
+                         />
                        </motion.div>
 
                        <motion.div

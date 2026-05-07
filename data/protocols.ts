@@ -27,12 +27,12 @@ export const PROTOCOLS: Protocol[] = [
 
       { id: 'h4', type: 'content', segment: 'hook', title: 'By the end of this protocol, you will:',
         content: '✅ Understand why you forget 80% of what you read\n\n✅ Know the one technique that 10x\'s retention\n\n✅ Build your personal "never forget" system',
-        visualComponent: 'IdentityShift' },
+        visualComponent: 'NeuralWeave' },
 
       // ═══ LEARN: ENCODING ═══
       { id: 'l1', type: 'content', segment: 'learn', title: 'Think of your brain like a phone.',
         content: 'When you take a photo, your phone saves it in a specific format — .jpg, .png, etc.\n\nYour brain does the same thing. It "saves" information in specific formats.',
-        visualComponent: 'BrainEncoder' },
+        visualComponent: 'PhoneBattery' },
       
       { id: 'l2', type: 'visual', segment: 'learn', title: 'Your brain has 3 save formats.',
         visualComponent: 'BrainEncoder', content: 'Watch how each one works.' },
@@ -72,7 +72,7 @@ export const PROTOCOLS: Protocol[] = [
       // ═══ LEARN: FORGETTING CURVE ═══
       { id: 'f1', type: 'content', segment: 'learn', title: 'Meet your brain\'s worst feature.',
         content: 'After learning something new, your brain starts DELETING it almost immediately.',
-        visualComponent: 'ForgettingCurve' },
+        visualComponent: 'MemoryDecay' },
       
       { id: 'f2', type: 'visual', segment: 'learn', title: 'The Forgetting Curve', visualComponent: 'ForgettingCurve',
         content: 'Watch what happens to your memory over time — then see the fix.' },

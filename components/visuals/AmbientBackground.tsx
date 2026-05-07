@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 export default function AmbientBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-      {/* Deep Blue Pulse */}
+      {/* Deep Blue Smooth Pulse */}
       <motion.div
         animate={{
           scale: [1, 1.1, 1],
@@ -18,10 +18,13 @@ export default function AmbientBackground() {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute -top-1/4 -left-1/4 w-[80%] h-[80%] bg-blue-900/20 blur-[120px] rounded-full"
+        className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%]"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(30, 58, 138, 0.2) 0%, transparent 70%)'
+        }}
       />
       
-      {/* Emerald Float */}
+      {/* Emerald Smooth Float */}
       <motion.div
         animate={{
           scale: [1, 1.2, 1],
@@ -35,7 +38,10 @@ export default function AmbientBackground() {
           ease: "easeInOut",
           delay: 2
         }}
-        className="absolute -bottom-1/4 -right-1/4 w-[70%] h-[70%] bg-emerald-900/10 blur-[150px] rounded-full"
+        className="absolute -bottom-1/4 -right-1/4 w-[150%] h-[150%]"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(6, 78, 59, 0.1) 0%, transparent 70%)'
+        }}
       />
 
       {/* Floating Dust Particles */}
