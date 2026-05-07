@@ -1,11 +1,17 @@
-"use client"
-import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useTransform } from 'framer-motion'
 import { User, Shield, Sparkles } from 'lucide-react'
+import { useMousePosition } from '@/hooks/useMousePosition'
 
 export default function IdentityShift() {
+  const { x, y } = useMousePosition()
+  const mouseX = useTransform(x, [-0.5, 0.5], [-20, 20])
+  const mouseY = useTransform(y, [-0.5, 0.5], [-20, 20])
+
   return (
-    <div className="relative w-full py-12 flex items-center justify-center gap-4">
+    <motion.div 
+      style={{ x: mouseX, y: mouseY }}
+      className="relative w-full py-12 flex items-center justify-center gap-4"
+    >
       {/* Old Identity */}
       <motion.div 
         initial={{ opacity: 1, x: 0 }}
@@ -54,6 +60,6 @@ export default function IdentityShift() {
         </div>
         <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest">Architect</span>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }

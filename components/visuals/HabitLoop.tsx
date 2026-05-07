@@ -1,9 +1,12 @@
-"use client"
-import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useTransform } from 'framer-motion'
 import { Bell, Play, Trophy, RefreshCcw } from 'lucide-react'
+import { useMousePosition } from '@/hooks/useMousePosition'
 
 export default function HabitLoop() {
+  const { x, y } = useMousePosition()
+  const rotateX = useTransform(y, [-0.5, 0.5], [15, -15])
+  const rotateY = useTransform(x, [-0.5, 0.5], [-15, 15])
+
   const steps = [
     { icon: Bell, label: 'Cue', color: '#60a5fa', pos: 'top' },
     { icon: Play, label: 'Action', color: '#a78bfa', pos: 'right' },
@@ -12,7 +15,10 @@ export default function HabitLoop() {
   ]
 
   return (
-    <div className="relative w-full aspect-square max-w-[280px] mx-auto py-10">
+    <motion.div 
+      style={{ perspective: 1000, rotateX, rotateY }}
+      className="relative w-full aspect-square max-w-[280px] mx-auto py-10"
+    >
       {/* Central Connector Circle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div 
@@ -67,6 +73,6 @@ export default function HabitLoop() {
         />
         <div className="w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
       </div>
-    </div>
+    </motion.div>
   )
 }
