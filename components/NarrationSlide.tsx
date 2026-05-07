@@ -54,12 +54,28 @@ export default function NarrationSlide({ title, scenes, onComplete }: Props) {
     utt.rate = 0.92
     utt.pitch = 1.0
 
-    // Try to pick a natural voice
+    // Try to pick a high-quality natural/neural voice
     const voices = window.speechSynthesis.getVoices()
-    const preferred = voices.find(v =>
-      v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium')
-    ) || voices.find(v => v.lang.startsWith('en')) || voices[0]
-    if (preferred) utt.voice = preferred
+    const preferred = 
+      voices.find(v => v.name.includes('Neural') && v.lang.startsWith('en')) || 
+      voices.find(v => v.name.includes('Natural') && v.lang.startsWith('en')) || 
+      voices.find(v => v.name.includes('Aria') && v.lang.startsWith('en')) ||
+      voices.find(v => v.name.includes('Guy') && v.lang.startsWith('en')) ||
+      voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) ||
+      voices.find(v => v.name.includes('Premium') && v.lang.startsWith('en')) ||
+      voices.find(v => v.name.includes('Samantha')) ||
+      voices.find(v => v.lang.startsWith('en')) || 
+      voices[0]
+    
+    if (preferred) {
+      utt.voice = preferred
+      // Adjust rate slightly for natural feel if it's a standard voice
+      if (!preferred.name.includes('Neural') && !preferred.name.includes('Natural')) {
+        utt.rate = 0.95
+      } else {
+        utt.rate = 1.0 // Neural voices are already paced well
+      }
+    }
 
     utt.onend = () => {
       timerRef.current = setTimeout(() => speakScene(idx + 1), 600)
