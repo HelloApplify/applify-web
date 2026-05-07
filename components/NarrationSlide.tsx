@@ -1,8 +1,8 @@
 "use client"
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Brain, Eye, Music, Zap, Target, BookOpen, Sparkles, Shield, RefreshCw } from 'lucide-react'
-import { NarrationScene } from '@/store/useProtocolStore'
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Brain, Eye, Music, Zap, Target, BookOpen, Sparkles, Shield, RefreshCw, Mic } from 'lucide-react'
+import { NarrationScene, useProtocolStore } from '@/store/useProtocolStore'
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   brain: Brain, eye: Eye, music: Music, zap: Zap, target: Target,
@@ -16,11 +16,13 @@ interface Props {
 }
 
 export default function NarrationSlide({ title, scenes, onComplete }: Props) {
+  const { voiceEngine, elevenLabsVoiceId } = useProtocolStore()
   const [currentScene, setCurrentScene] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [hasStarted, setHasStarted] = useState(false)
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const scene = scenes[currentScene]
@@ -30,10 +32,14 @@ export default function NarrationSlide({ title, scenes, onComplete }: Props) {
     if (typeof window !== 'undefined') {
       window.speechSynthesis?.cancel()
     }
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current = null
+    }
     if (timerRef.current) clearTimeout(timerRef.current)
   }, [])
 
-  const speakScene = useCallback((idx: number) => {
+  const speakScene = useCallback(async (idx: number) => {
     if (idx >= scenes.length) {
       setIsPlaying(false)
       if (onComplete) onComplete()
@@ -42,13 +48,41 @@ export default function NarrationSlide({ title, scenes, onComplete }: Props) {
     stopSpeech()
     setCurrentScene(idx)
 
-    if (isMuted || typeof window === 'undefined' || !window.speechSynthesis) {
+    if (isMuted || typeof window === 'undefined') {
       // Silent mode: auto-advance after estimated read time
       const words = scenes[idx].text.split(' ').length
       const ms = Math.max(3000, words * 300)
       timerRef.current = setTimeout(() => speakScene(idx + 1), ms)
       return
     }
+
+    if (voiceEngine === 'elevenlabs') {
+      try {
+        const response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: scenes[idx].text, voiceId: elevenLabsVoiceId })
+        })
+        
+        if (!response.ok) throw new Error('ElevenLabs API failed')
+        
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        
+        const audio = new Audio(url)
+        audioRef.current = audio
+        audio.onended = () => {
+          timerRef.current = setTimeout(() => speakScene(idx + 1), 600)
+        }
+        audio.play()
+        return
+      } catch (err) {
+        console.error('ElevenLabs failed, falling back to browser:', err)
+        // Fallthrough to standard browser speech
+      }
+    }
+
+    if (!window.speechSynthesis) return
 
     const utt = new SpeechSynthesisUtterance(scenes[idx].text)
     utt.rate = 0.92

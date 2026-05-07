@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles, Trophy, Settings, ArrowLeft } from 'lucide-react'
 import { useProtocolStore } from '@/store/useProtocolStore'
+import { generateImplementationPlan } from '@/utils/implementationEngine'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import NarrationSlide from '@/components/NarrationSlide'
@@ -17,7 +18,7 @@ const VISUALS: Record<string, React.ComponentType> = {
 }
 
 export default function ProtocolPlayer() {
-  const { activeProtocol, currentSlideIndex, isModalOpen, nextSlide, prevSlide, closeModal, completeProtocol, userInputs, setInput } = useProtocolStore()
+  const { activeProtocol, currentSlideIndex, isModalOpen, nextSlide, prevSlide, closeModal, completeProtocol, userInputs, setInput, setPlan } = useProtocolStore()
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackText, setFeedbackText] = useState('')
@@ -59,6 +60,10 @@ export default function ProtocolPlayer() {
     setFeedbackText('')
     
     if (isLast && showBlueprint) {
+      // Generate the official implementation plan for the dashboard
+      const plan = generateImplementationPlan(activeProtocol, userInputs)
+      setPlan(plan)
+      
       completeProtocol(activeProtocol.id)
       setShowBlueprint(false)
       closeModal()

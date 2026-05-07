@@ -10,7 +10,7 @@ import {
   Type, HelpCircle, Sparkles, Database, Filter, Download
 } from 'lucide-react'
 import { PROTOCOLS } from '@/data/protocols'
-import { Protocol, ProtocolSlide } from '@/store/useProtocolStore'
+import { Protocol, ProtocolSlide, useProtocolStore } from '@/store/useProtocolStore'
 
 import { createClient } from '@/utils/supabase/client'
 
@@ -18,6 +18,7 @@ type AdminTab = 'orchestrator' | 'curator' | 'users' | 'settings';
 
 export default function AdminDashboard() {
   const supabase = createClient()
+  const { voiceEngine, elevenLabsVoiceId, setVoiceEngine, setElevenLabsVoiceId } = useProtocolStore()
   const [activeTab, setActiveTab] = useState<AdminTab>('orchestrator')
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol>(PROTOCOLS[0])
   const [slides, setSlides] = useState<ProtocolSlide[]>(PROTOCOLS[0].slides)
@@ -515,13 +516,35 @@ export default function AdminDashboard() {
                         </h3>
                         <div className="space-y-6">
                           <div className="space-y-3">
-                            <label className="text-[11px] font-black text-white/20 uppercase tracking-widest ml-1">Default ElevenLabs Engine</label>
+                            <label className="text-[11px] font-black text-white/20 uppercase tracking-widest ml-1">Voice Engine Strategy</label>
+                            <div className="grid grid-cols-2 gap-3">
+                              <button 
+                                onClick={() => setVoiceEngine('browser')}
+                                className={`py-4 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${voiceEngine === 'browser' ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-white/5 border-white/10 text-white/30 hover:text-white'}`}
+                              >
+                                Browser Neural
+                              </button>
+                              <button 
+                                onClick={() => setVoiceEngine('elevenlabs')}
+                                className={`py-4 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${voiceEngine === 'elevenlabs' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-white/5 border-white/10 text-white/30 hover:text-white'}`}
+                              >
+                                ElevenLabs (Human)
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="space-y-3">
+                            <label className="text-[11px] font-black text-white/20 uppercase tracking-widest ml-1">ElevenLabs Voice Profile</label>
                             <div className="relative group">
-                              <select className="w-full bg-black border border-white/10 rounded-3xl px-6 py-5 text-sm text-white focus:border-blue-500/50 outline-none appearance-none cursor-pointer group-hover:border-white/20 transition-all">
-                                <option>The Strategist (Standard Output)</option>
-                                <option>The Mentor (Empathetic Flow)</option>
-                                <option>The CEO (Authoritative Command)</option>
-                                <option>Personal Clone (Jacob V1.0)</option>
+                              <select 
+                                value={elevenLabsVoiceId}
+                                onChange={(e) => setElevenLabsVoiceId(e.target.value)}
+                                className="w-full bg-black border border-white/10 rounded-3xl px-6 py-5 text-sm text-white focus:border-blue-500/50 outline-none appearance-none cursor-pointer group-hover:border-white/20 transition-all"
+                              >
+                                <option value="pNInz6obpgDQGcFmaJgB">The Strategist (Adam)</option>
+                                <option value="EXAVITQu4vr4xnSDxMaL">The Mentor (Bella)</option>
+                                <option value="VR6AweUjD35Ct7D6rtfk">The CEO (Arnold)</option>
+                                <option value="MF3mGyEYCl7XYW7L9S0O">The Visionary (Josh)</option>
                               </select>
                               <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                 <ArrowDown className="w-4 h-4" />

@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import { PlayCircle, Lock, Target, Clock, Zap, Brain, CheckCircle2, ShieldCheck } from 'lucide-react'
 import ProtocolPlayer from '@/components/ProtocolPlayer'
+import ImplementationMaster from '@/components/ImplementationMaster'
 import { useProtocolStore } from '@/store/useProtocolStore'
 import { PROTOCOLS } from '@/data/protocols'
 import { motion } from 'framer-motion'
@@ -35,6 +36,9 @@ export default function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-8">
       <ProtocolPlayer />
+      
+      {/* Library Protocol Master: Active Implementation Plan */}
+      <ImplementationMaster />
 
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-10 sm:mb-14">
