@@ -12,9 +12,10 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 interface Props {
   title: string
   scenes: NarrationScene[]
+  onComplete?: () => void
 }
 
-export default function NarrationSlide({ title, scenes }: Props) {
+export default function NarrationSlide({ title, scenes, onComplete }: Props) {
   const [currentScene, setCurrentScene] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -35,6 +36,7 @@ export default function NarrationSlide({ title, scenes }: Props) {
   const speakScene = useCallback((idx: number) => {
     if (idx >= scenes.length) {
       setIsPlaying(false)
+      if (onComplete) onComplete()
       return
     }
     stopSpeech()
@@ -64,7 +66,7 @@ export default function NarrationSlide({ title, scenes }: Props) {
     }
     utteranceRef.current = utt
     window.speechSynthesis.speak(utt)
-  }, [scenes, isMuted, stopSpeech])
+  }, [scenes, isMuted, stopSpeech, onComplete])
 
   const handlePlay = () => {
     if (!hasStarted) {
