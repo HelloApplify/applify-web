@@ -26,6 +26,7 @@ export default async function Icon() {
           src={base64Image}
           width={256}
           height={201}
+          alt="Applify Icon"
           style={{ display: 'flex' }}
         />
       </div>
