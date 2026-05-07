@@ -50,6 +50,7 @@ export default function ProtocolPlayer() {
   const [showBlueprint, setShowBlueprint] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [validationFeedback, setValidationFeedback] = useState<{ status: 'success' | 'warning' | 'error', text: string } | null>(null)
+  const [feedbackHue, setFeedbackHue] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   if (!isModalOpen || !activeProtocol) return null
@@ -63,10 +64,21 @@ export default function ProtocolPlayer() {
   const handleOption = (idx: number) => {
     setSelectedOption(idx)
     const opt = slide.options?.[idx]
-    if (opt) setInput(slide.id, opt.label)
-    if (slide.type === 'quiz' && opt?.feedback) {
-      setFeedbackText(opt.feedback)
-      setShowFeedback(true)
+    if (opt) {
+      setInput(slide.id, opt.label)
+      if (slide.type === 'quiz') {
+        if (opt.isCorrect) {
+          setFeedbackHue('#10b981') // Success Emerald
+        } else {
+          setFeedbackHue('#ef4444') // Error Red
+        }
+        if (opt.feedback) {
+          setFeedbackText(opt.feedback)
+          setShowFeedback(true)
+        }
+      } else {
+        setFeedbackHue('#3b82f6') // Blue for Polls
+      }
     }
   }
 
@@ -89,7 +101,7 @@ export default function ProtocolPlayer() {
     if (isLast && !showBlueprint) {
       setIsGenerating(true); await new Promise(r => setTimeout(r, 2000)); setIsGenerating(false); setShowBlueprint(true); return
     }
-    setSelectedOption(null); setShowFeedback(false); setFeedbackText(''); setValidationFeedback(null)
+    setSelectedOption(null); setShowFeedback(false); setFeedbackText(''); setValidationFeedback(null); setFeedbackHue(null)
     if (isLast && showBlueprint) {
       const plan = generateImplementationPlan(activeProtocol, userInputs)
       setPlan(plan); completeProtocol(activeProtocol.id); setShowBlueprint(false); closeModal()
@@ -97,7 +109,7 @@ export default function ProtocolPlayer() {
   }
 
   const handlePrev = () => {
-    setSelectedOption(null); setShowFeedback(false); setFeedbackText(''); setValidationFeedback(null); prevSlide()
+    setSelectedOption(null); setShowFeedback(false); setFeedbackText(''); setValidationFeedback(null); setFeedbackHue(null); prevSlide()
   }
 
   return (
@@ -124,7 +136,24 @@ export default function ProtocolPlayer() {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto min-h-0 relative">
-          <LivingBackground color={segColor} />
+          <AmbientBackground />
+          
+          {/* Dopamine Feedback Glow */}
+          <AnimatePresence>
+            {feedbackHue && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{ 
+                  background: `radial-gradient(circle at center, ${feedbackHue}20 0%, transparent 70%)` 
+                }}
+              />
+            )}
+          </AnimatePresence>
+
           <div className="max-w-5xl mx-auto w-full px-6 relative z-10">
             {slide.type === 'narration' ? (
               <NarrationSlide title={slide.title} scenes={slide.scenes || []} onComplete={handleNext} />
@@ -175,17 +204,42 @@ export default function ProtocolPlayer() {
                   {(slide.type === 'quiz' || slide.type === 'poll') && (
                     <DataPrism title={slide.title}>
                       <div className="grid grid-cols-1 gap-3">
-                        {slide.options?.map((opt, idx) => (
-                          <button key={idx} onClick={() => slide.type === 'quiz' ? handleOption(idx) : setSelectedOption(idx)}
-                            disabled={slide.type === 'quiz' && selectedOption !== null}
-                            className={`p-6 rounded-2xl border transition-all duration-300 text-left flex items-center justify-between gap-4
-                              ${selectedOption === idx 
-                                ? (slide.type === 'quiz' ? (opt.isCorrect ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-red-500/20 border-red-500/40 text-red-400') : 'bg-blue-500/20 border-blue-500/40 text-blue-400')
-                                : selectedOption !== null ? 'opacity-20 border-white/5' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}`}>
-                            <span className="font-bold text-lg">{opt.label}</span>
-                            {selectedOption === idx && (slide.type === 'quiz' ? (opt.isCorrect ? <CheckCircle2 className="w-6 h-6" /> : <X className="w-6 h-6" />) : <Target className="w-6 h-6" />)}
-                          </button>
-                        ))}
+                        {slide.options?.map((opt, idx) => {
+                          const isSelected = selectedOption === idx
+                          const isQuiz = slide.type === 'quiz'
+                          const statusColor = isQuiz ? (opt.isCorrect ? '#10b981' : '#ef4444') : '#3b82f6'
+                          
+                          return (
+                            <motion.button 
+                              key={idx} 
+                              onClick={() => isQuiz ? handleOption(idx) : setSelectedOption(idx)}
+                              disabled={isQuiz && selectedOption !== null}
+                              whileHover={selectedOption === null ? { scale: 1.02, x: 5 } : {}}
+                              whileTap={selectedOption === null ? { scale: 0.98 } : {}}
+                              className={`p-6 rounded-2xl border transition-all duration-500 text-left flex items-center justify-between gap-4 group
+                                ${isSelected 
+                                  ? `border-opacity-100 shadow-[0_0_40px_rgba(0,0,0,0.3)]` 
+                                  : selectedOption !== null ? 'opacity-20 border-white/5 bg-transparent' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20'}`}
+                              style={{ 
+                                borderColor: isSelected ? statusColor : undefined,
+                                backgroundColor: isSelected ? `${statusColor}15` : undefined,
+                                color: isSelected ? statusColor : undefined
+                              }}>
+                              <span className="font-bold text-lg">{opt.label}</span>
+                              <AnimatePresence>
+                                {isSelected && (
+                                  <motion.div 
+                                    initial={{ scale: 0, rotate: -45 }} 
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    className="shrink-0"
+                                  >
+                                    {isQuiz ? (opt.isCorrect ? <CheckCircle2 className="w-7 h-7" /> : <X className="w-7 h-7" />) : <Target className="w-7 h-7" />}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </motion.button>
+                          )
+                        })}
                       </div>
                       {showFeedback && feedbackText && (
                         <div className="mt-6 p-6 rounded-2xl bg-white/5 border border-white/10 text-white/50 font-medium">{feedbackText}</div>
