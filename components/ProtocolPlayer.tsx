@@ -1,8 +1,9 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles, Trophy } from 'lucide-react'
+import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles, Trophy, Settings, ArrowLeft } from 'lucide-react'
 import { useProtocolStore } from '@/store/useProtocolStore'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 const BrainEncoder = dynamic(() => import('@/components/visuals/BrainEncoder'), { ssr: false })
@@ -19,6 +20,8 @@ export default function ProtocolPlayer() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackText, setFeedbackText] = useState('')
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   if (!isModalOpen || !activeProtocol) return null
 
@@ -59,156 +62,178 @@ export default function ProtocolPlayer() {
   const VisualComp = slide.visualComponent ? VISUALS[slide.visualComponent] : null
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-[#050505]">
-        <div className="w-full h-[100dvh] flex flex-col">
-          {/* Progress */}
-          <div className="w-full h-1 bg-white/5 shrink-0">
-            <motion.div className="h-full" style={{ backgroundColor: segColor, boxShadow: `0 0 12px ${segColor}50` }}
-              animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: "circOut" }} />
-          </div>
+    <div className="fixed inset-0 z-[100] bg-[#050505]" style={{ isolation: 'isolate' }}>
+      <div className="w-full h-[100dvh] flex flex-col">
+        {/* Progress Bar */}
+        <div className="w-full h-1 bg-white/5 shrink-0">
+          <motion.div className="h-full" style={{ backgroundColor: segColor, boxShadow: `0 0 12px ${segColor}40` }}
+            animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: "circOut" }} />
+        </div>
 
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 sm:px-8 py-3 shrink-0 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${segColor}15` }}>
-                {slide.segment === 'hook' && <Zap className="w-4 h-4" style={{ color: segColor }} />}
-                {slide.segment === 'learn' && <Brain className="w-4 h-4" style={{ color: segColor }} />}
-                {slide.segment === 'practice' && <Sparkles className="w-4 h-4" style={{ color: segColor }} />}
-                {slide.segment === 'apply' && <Target className="w-4 h-4" style={{ color: segColor }} />}
-              </div>
-              <div>
-                <span className="text-[9px] font-black uppercase tracking-[0.15em] block" style={{ color: `${segColor}99` }}>
-                  {slide.segment} • {currentSlideIndex + 1}/{activeProtocol.slides.length}
-                </span>
-              </div>
+        {/* Clean Header */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 shrink-0">
+          {/* Left: segment + slide count */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${segColor}12` }}>
+              {slide.segment === 'hook' && <Zap className="w-3.5 h-3.5" style={{ color: segColor }} />}
+              {slide.segment === 'learn' && <Brain className="w-3.5 h-3.5" style={{ color: segColor }} />}
+              {slide.segment === 'practice' && <Sparkles className="w-3.5 h-3.5" style={{ color: segColor }} />}
+              {slide.segment === 'apply' && <Target className="w-3.5 h-3.5" style={{ color: segColor }} />}
             </div>
-            <button onClick={closeModal} className="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors">
-              <X className="w-4 h-4" />
-            </button>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">
+              {currentSlideIndex + 1} / {activeProtocol.slides.length}
+            </span>
           </div>
 
-          {/* Content - scrollable area */}
-          <div className="flex-1 overflow-y-auto min-h-0">
-            <div className="max-w-lg mx-auto w-full px-5 sm:px-8 py-6 sm:py-10">
-              <AnimatePresence mode="wait">
-                <motion.div key={slide.id}
-                  initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+          {/* Right: Profile Avatar */}
+          <div className="relative" ref={menuRef}>
+            <button onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-600 p-[1px] hover:scale-105 active:scale-95 transition-transform">
+              <div className="w-full h-full bg-[#0A0A0A] rounded-[0.6rem] flex items-center justify-center text-white font-black text-[10px] uppercase">
+                JY
+              </div>
+            </button>
 
-                  {/* Celebration */}
-                  {slide.type === 'celebration' && (
-                    <div className="text-center py-8">
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-                        className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                        <Trophy className="w-10 h-10 text-emerald-400" />
-                      </motion.div>
-                      <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
-                      <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
-                    </div>
-                  )}
-
-                  {/* Checkpoint */}
-                  {slide.type === 'checkpoint' && (
-                    <div className="text-center py-6">
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}
-                        className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center" style={{ backgroundColor: `${segColor}15`, border: `1px solid ${segColor}30` }}>
-                        <CheckCircle2 className="w-8 h-8" style={{ color: segColor }} />
-                      </motion.div>
-                      <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
-                      <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
-                    </div>
-                  )}
-
-                  {/* Content / Quiz / Poll / Reflection / Visual */}
-                  {!['celebration', 'checkpoint'].includes(slide.type) && (
-                    <>
-                      <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
-                        {slide.title}
-                      </h2>
-                      <p className="text-base sm:text-lg text-white/50 font-medium leading-relaxed whitespace-pre-line mb-6">
-                        {slide.content}
-                      </p>
-
-                      {/* Visual */}
-                      {slide.type === 'visual' && VisualComp && (
-                        <div className="my-4"><VisualComp /></div>
-                      )}
-
-                      {/* Quiz Options */}
-                      {(slide.type === 'quiz') && slide.options && (
-                        <div className="flex flex-col gap-2.5 mt-4">
-                          {slide.options.map((opt, idx) => {
-                            const selected = selectedOption === idx
-                            const correct = opt.isCorrect
-                            return (
-                              <button key={idx} onClick={() => handleOption(idx)}
-                                disabled={selectedOption !== null}
-                                className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between gap-3
-                                  ${selected
-                                    ? (correct ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-red-500/10 border-red-500/40 text-red-400')
-                                    : selectedOption !== null ? 'bg-white/[0.02] border-white/5 text-white/30 opacity-50' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]'
-                                  }`}>
-                                <span className="font-bold text-sm leading-snug">{opt.label}</span>
-                                {selected && correct && <CheckCircle2 className="w-4 h-4 shrink-0" />}
-                                {selected && !correct && <X className="w-4 h-4 shrink-0" />}
-                              </button>
-                            )
-                          })}
-                          {showFeedback && feedbackText && (
-                            <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                              className="p-4 rounded-xl bg-white/5 border border-white/10 mt-2">
-                              <p className="text-sm text-white/60 font-medium">{feedbackText}</p>
-                            </motion.div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Poll Options */}
-                      {slide.type === 'poll' && slide.options && (
-                        <div className="flex flex-col gap-2.5 mt-4">
-                          {slide.options.map((opt, idx) => (
-                            <button key={idx} onClick={() => setSelectedOption(idx)}
-                              className={`w-full text-left p-4 rounded-xl border transition-all duration-200
-                                ${selectedOption === idx
-                                  ? 'bg-blue-500/10 border-blue-500/40 text-blue-400'
-                                  : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 active:scale-[0.98]'
-                                }`}>
-                              <span className="font-bold text-sm">{opt.label}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Reflection */}
-                      {slide.type === 'reflection' && (
-                        <div className="mt-4">
-                          <textarea placeholder={slide.placeholder || 'Type your answer...'}
-                            className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none" />
-                        </div>
-                      )}
-                    </>
-                  )}
+            {/* Dropdown Menu */}
+            <AnimatePresence>
+              {showProfileMenu && (
+                <motion.div initial={{ opacity: 0, y: -5, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -5, scale: 0.95 }} transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-12 w-48 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-[110]">
+                  <button onClick={() => { closeModal(); setShowProfileMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-white/70 hover:bg-white/5 hover:text-white transition-colors">
+                    <ArrowLeft className="w-4 h-4" /> Back to Library
+                  </button>
+                  <Link href="/settings" onClick={() => { closeModal(); setShowProfileMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-white/70 hover:bg-white/5 hover:text-white transition-colors">
+                    <Settings className="w-4 h-4" /> Settings
+                  </Link>
                 </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="px-4 sm:px-8 py-4 border-t border-white/5 flex justify-between items-center shrink-0 bg-[#050505]">
-            <button onClick={handlePrev} disabled={currentSlideIndex === 0}
-              className="flex items-center gap-1.5 text-white/30 hover:text-white transition-colors disabled:invisible text-sm font-bold">
-              <ChevronLeft className="w-4 h-4" /> Back
-            </button>
-            <button onClick={handleNext}
-              className="flex items-center gap-2 text-black px-6 sm:px-8 py-3 rounded-xl font-black text-sm hover:scale-[1.02] active:scale-[0.97] transition-all"
-              style={{ backgroundColor: segColor, boxShadow: `0 0 20px ${segColor}30` }}>
-              {isLast ? 'Complete' : 'Continue'} <ArrowRight className="w-4 h-4" />
-            </button>
+              )}
+            </AnimatePresence>
           </div>
         </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="max-w-lg mx-auto w-full px-5 sm:px-8 py-6 sm:py-10">
+            <AnimatePresence mode="wait">
+              <motion.div key={slide.id}
+                initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+
+                {/* Celebration */}
+                {slide.type === 'celebration' && (
+                  <div className="text-center py-8">
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
+                      className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                      <Trophy className="w-10 h-10 text-emerald-400" />
+                    </motion.div>
+                    <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
+                    <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                  </div>
+                )}
+
+                {/* Checkpoint */}
+                {slide.type === 'checkpoint' && (
+                  <div className="text-center py-6">
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}
+                      className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center" style={{ backgroundColor: `${segColor}15`, border: `1px solid ${segColor}30` }}>
+                      <CheckCircle2 className="w-8 h-8" style={{ color: segColor }} />
+                    </motion.div>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-4">{slide.title}</h2>
+                    <p className="text-base text-white/50 font-medium leading-relaxed whitespace-pre-line">{slide.content}</p>
+                  </div>
+                )}
+
+                {/* Content / Quiz / Poll / Reflection / Visual */}
+                {!['celebration', 'checkpoint'].includes(slide.type) && (
+                  <>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
+                      {slide.title}
+                    </h2>
+                    <p className="text-base sm:text-lg text-white/50 font-medium leading-relaxed whitespace-pre-line mb-6">
+                      {slide.content}
+                    </p>
+
+                    {/* Visual */}
+                    {slide.type === 'visual' && VisualComp && (
+                      <div className="my-4"><VisualComp /></div>
+                    )}
+
+                    {/* Quiz Options */}
+                    {(slide.type === 'quiz') && slide.options && (
+                      <div className="flex flex-col gap-2.5 mt-4">
+                        {slide.options.map((opt, idx) => {
+                          const selected = selectedOption === idx
+                          const correct = opt.isCorrect
+                          return (
+                            <button key={idx} onClick={() => handleOption(idx)}
+                              disabled={selectedOption !== null}
+                              className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between gap-3
+                                ${selected
+                                  ? (correct ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-red-500/10 border-red-500/40 text-red-400')
+                                  : selectedOption !== null ? 'bg-white/[0.02] border-white/5 text-white/30 opacity-50' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]'
+                                }`}>
+                              <span className="font-bold text-sm leading-snug">{opt.label}</span>
+                              {selected && correct && <CheckCircle2 className="w-4 h-4 shrink-0" />}
+                              {selected && !correct && <X className="w-4 h-4 shrink-0" />}
+                            </button>
+                          )
+                        })}
+                        {showFeedback && feedbackText && (
+                          <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
+                            className="p-4 rounded-xl bg-white/5 border border-white/10 mt-2">
+                            <p className="text-sm text-white/60 font-medium">{feedbackText}</p>
+                          </motion.div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Poll Options */}
+                    {slide.type === 'poll' && slide.options && (
+                      <div className="flex flex-col gap-2.5 mt-4">
+                        {slide.options.map((opt, idx) => (
+                          <button key={idx} onClick={() => setSelectedOption(idx)}
+                            className={`w-full text-left p-4 rounded-xl border transition-all duration-200
+                              ${selectedOption === idx
+                                ? 'bg-blue-500/10 border-blue-500/40 text-blue-400'
+                                : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 active:scale-[0.98]'
+                              }`}>
+                            <span className="font-bold text-sm">{opt.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Reflection */}
+                    {slide.type === 'reflection' && (
+                      <div className="mt-4">
+                        <textarea placeholder={slide.placeholder || 'Type your answer...'}
+                          className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none" />
+                      </div>
+                    )}
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 sm:px-6 py-3 border-t border-white/5 flex justify-between items-center shrink-0 bg-[#050505]">
+          <button onClick={handlePrev} disabled={currentSlideIndex === 0}
+            className="flex items-center gap-1.5 text-white/30 hover:text-white transition-colors disabled:invisible text-sm font-bold">
+            <ChevronLeft className="w-4 h-4" /> Back
+          </button>
+          <button onClick={handleNext}
+            className="flex items-center gap-2 text-black px-6 py-3 rounded-xl font-black text-sm hover:scale-[1.02] active:scale-[0.97] transition-all"
+            style={{ backgroundColor: segColor, boxShadow: `0 0 20px ${segColor}30` }}>
+            {isLast ? 'Complete' : 'Continue'} <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-    </AnimatePresence>
+    </div>
   )
 }

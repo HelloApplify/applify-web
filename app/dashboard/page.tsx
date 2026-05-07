@@ -20,13 +20,22 @@ export default function DashboardPage() {
   const isCompleted = (id: string) => completedProtocols.includes(id)
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-8">
       <ProtocolPlayer />
-      
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-10 sm:mb-14">
-        <h2 className="text-3xl sm:text-5xl font-black text-white mb-3 tracking-tighter">Protocol Library</h2>
-        <p className="text-base sm:text-lg text-neutral-500 font-medium tracking-tight">Select a module to begin your cognitive upgrade.</p>
-      </motion.div>
+
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-10 sm:mb-14">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-1.5 tracking-tighter">Protocol Library</h2>
+          <p className="text-sm sm:text-base text-neutral-500 font-medium tracking-tight">Select a module to begin.</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+          className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-600 p-[1px] shrink-0">
+          <div className="w-full h-full bg-[#0A0A0A] rounded-[0.65rem] flex items-center justify-center text-white font-black text-[10px] uppercase">
+            JY
+          </div>
+        </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {PROTOCOLS.map((protocol, idx) => {
