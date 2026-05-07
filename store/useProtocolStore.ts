@@ -1,7 +1,13 @@
 import { create } from 'zustand'
 
 export type SegmentType = 'hook' | 'learn' | 'practice' | 'apply';
-export type SlideType = 'content' | 'quiz' | 'poll' | 'visual' | 'reflection' | 'checkpoint' | 'celebration';
+export type SlideType = 'content' | 'quiz' | 'poll' | 'visual' | 'reflection' | 'checkpoint' | 'celebration' | 'narration';
+
+export interface NarrationScene {
+  text: string
+  icon?: string
+  highlight?: string
+}
 
 export interface ProtocolSlide {
   id: string
@@ -12,6 +18,7 @@ export interface ProtocolSlide {
   visualComponent?: string
   options?: { label: string; isCorrect?: boolean; feedback?: string }[]
   placeholder?: string
+  scenes?: NarrationScene[]
 }
 
 export interface Protocol {
