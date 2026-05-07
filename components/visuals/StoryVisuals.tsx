@@ -8,7 +8,7 @@ export const BrainBox = () => (
   <div className="relative w-48 h-48 flex items-center justify-center">
     <motion.div 
       animate={{ scale: [1, 1.05, 1], rotate: [0, 1, -1, 0] }}
-      transition={{ duration: 4, repeat: Infinity }}
+      transition={{ duration: 6, repeat: Infinity }}
       className="relative z-10"
     >
       <Brain className="w-20 h-20 text-blue-400 opacity-80" />
@@ -27,7 +27,7 @@ export const BrainBox = () => (
          <motion.div 
            key={i}
            animate={{ height: ["0%", "100%", "0%"] }}
-           transition={{ duration: 3, repeat: Infinity, delay: i * 0.2 }}
+           transition={{ duration: 6, repeat: Infinity, delay: i * 0.5 }}
            className="w-1 bg-white/10 mx-4 rounded-full"
          />
        ))}
@@ -81,14 +81,14 @@ export const MemoryEraser = () => (
   <div className="relative w-64 h-32 flex items-center justify-center">
     <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden relative">
       <motion.div 
-        animate={{ width: ["100%", "0%"] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        animate={{ width: ["100%", "0%", "100%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         className="h-full bg-blue-500"
       />
     </div>
     <motion.div 
-      animate={{ x: ["-100%", "100%"] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+      animate={{ x: ["-120%", "120%", "-120%"] }}
+      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
     >
       <div className="w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center">
