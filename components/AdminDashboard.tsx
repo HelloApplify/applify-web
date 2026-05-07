@@ -28,6 +28,17 @@ export default function AdminDashboard() {
   const [imagePrompt, setImagePrompt] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
+  // Load persisted webhook URL
+  useEffect(() => {
+    const savedUrl = localStorage.getItem('applify_webhook_url')
+    if (savedUrl) setWebhookUrl(savedUrl)
+  }, [])
+
+  // Persist webhook URL whenever it changes
+  useEffect(() => {
+    if (webhookUrl) localStorage.setItem('applify_webhook_url', webhookUrl)
+  }, [webhookUrl])
+
   // Real Data State
   const [users, setUsers] = useState<any[]>([])
   const [mediaLibrary, setMediaLibrary] = useState<any[]>([])
@@ -174,6 +185,25 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Make.com Webhook URL</label>
+                            <div className="relative group">
+                              <input 
+                                type="text"
+                                value={webhookUrl}
+                                onChange={(e) => setWebhookUrl(e.target.value)}
+                                placeholder="https://hook.make.com/your-custom-webhook-id"
+                                className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm text-blue-400 placeholder:text-white/10 focus:border-blue-500/50 outline-none transition-all shadow-inner font-mono"
+                              />
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                <Link href="https://www.make.com" target="_blank" className="p-2 rounded-lg bg-white/5 text-white/20 hover:text-white transition-all">
+                                  <ExternalLink className="w-4 h-4" />
+                                </Link>
+                              </div>
+                            </div>
+                            <p className="text-[9px] text-white/20 font-bold ml-1 italic">This URL connects the Admin Hub to your automated video editing sequence.</p>
+                          </div>
+
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Narration Script (ElevenLabs)</label>
                             <textarea 
