@@ -126,7 +126,7 @@ export default function ProtocolPlayer() {
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 shrink-0 relative z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${segColor}15` }}>
               <Zap className="w-4 h-4" style={{ color: segColor }} />
@@ -139,7 +139,7 @@ export default function ProtocolPlayer() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto min-h-0 relative">
+        <div className="flex-1 overflow-y-auto min-h-0 relative z-0">
           <LivingBackground color={segColor} />
           
           {/* Dopamine Feedback Glow */}
@@ -297,7 +297,7 @@ export default function ProtocolPlayer() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-6 border-t border-white/5 flex justify-between items-center bg-[#050505] z-20">
+        <div className="px-6 py-6 border-t border-white/5 flex justify-between items-center bg-[#050505]/80 backdrop-blur-md z-50">
           <button onClick={handlePrev} disabled={currentSlideIndex === 0 || isGenerating}
             className="flex items-center gap-2 text-white/30 hover:text-white transition-colors disabled:invisible text-sm font-black uppercase tracking-widest">
             <ChevronLeft className="w-5 h-5" /> Back
