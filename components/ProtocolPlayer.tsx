@@ -193,16 +193,33 @@ export default function ProtocolPlayer() {
                     </DataPrism>
                   )}
 
-                  {slide.type === 'content' && (
-                    <div className="py-20 flex flex-col items-center text-center">
+                  {(slide.type === 'content' || slide.type === 'visual' || slide.type === 'checkpoint') && (
+                    <div className="py-12 sm:py-20 flex flex-col items-center text-center">
                        <motion.div 
                          initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                         className="mb-12"
+                         className="mb-12 relative"
                        >
-                         {slide.visualComponent ? React.createElement(VISUALS[slide.visualComponent] || QuantumGlow) : <QuantumGlow />}
+                         {/* Specific Visual Component OR QuantumGlow Fallback */}
+                         <div className="relative z-10">
+                           {slide.visualComponent ? React.createElement(VISUALS[slide.visualComponent] || QuantumGlow) : <QuantumGlow />}
+                         </div>
+                         
+                         {/* Ambient Glow behind the visual */}
+                         <div className="absolute inset-0 bg-blue-500/5 blur-[80px] -z-10 rounded-full scale-150" />
                        </motion.div>
-                       <h2 className="text-5xl font-black text-white mb-6 uppercase italic tracking-tighter">{slide.title}</h2>
-                       <p className="text-2xl text-white/50 font-medium max-w-2xl leading-relaxed">{slide.content}</p>
+
+                       <motion.div
+                         initial={{ opacity: 0, y: 10 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         transition={{ delay: 0.3 }}
+                       >
+                        <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 uppercase italic tracking-tighter leading-tight">
+                          {slide.title}
+                        </h2>
+                        <p className="text-lg sm:text-2xl text-white/50 font-medium max-w-2xl mx-auto leading-relaxed whitespace-pre-line">
+                          {slide.content}
+                        </p>
+                       </motion.div>
                     </div>
                   )}
 
