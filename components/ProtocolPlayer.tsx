@@ -148,13 +148,34 @@ export default function ProtocolPlayer() {
                   </div>
                 )}
 
-                {/* Narration */}
-                {slide.type === 'narration' && slide.scenes && (
-                  <NarrationSlide title={slide.title} scenes={slide.scenes} />
+                {/* Video */}
+                {slide.type === 'video' && slide.videoUrl && (
+                  <div className="w-full">
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-6 leading-tight text-center">
+                      {slide.title}
+                    </h2>
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-black">
+                      {slide.videoUrl.includes('youtube.com') || slide.videoUrl.includes('youtu.be') ? (
+                        <iframe
+                          src={slide.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                          className="absolute inset-0 w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video src={slide.videoUrl} controls className="absolute inset-0 w-full h-full object-cover" />
+                      )}
+                    </div>
+                    {slide.content && (
+                      <p className="mt-6 text-base text-white/50 font-medium leading-relaxed">
+                        {slide.content}
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 {/* Content / Quiz / Poll / Reflection / Visual */}
-                {!['celebration', 'checkpoint', 'narration'].includes(slide.type) && (
+                {!['celebration', 'checkpoint', 'narration', 'video'].includes(slide.type) && (
                   <>
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
                       {slide.title}
