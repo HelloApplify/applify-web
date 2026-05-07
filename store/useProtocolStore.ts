@@ -22,6 +22,11 @@ export interface ProtocolSlide {
   placeholder?: string
   scenes?: NarrationScene[]
   videoUrl?: string
+  validation?: {
+    type: 'exact' | 'ai' | 'keyword';
+    expected?: string[];
+    prompt?: string;
+  }
 }
 
 

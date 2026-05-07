@@ -13,6 +13,7 @@ export interface ImplementationPlan {
   protocolId: string;
   protocolTitle: string;
   userGoal: string;
+  feynmanAnalogy: string;
   steps: ImplementationStep[];
   startedAt: string;
 }
@@ -20,6 +21,7 @@ export interface ImplementationPlan {
 export function generateImplementationPlan(protocol: Protocol, userInputs: Record<string, string>): ImplementationPlan {
   const userGoal = userInputs['a2'] || 'General Mastery';
   const recallTrigger = userInputs['a3'] || 'What is the core concept?';
+  const feynmanAnalogy = userInputs['fe3'] || 'Simplicity is the ultimate sophistication.';
   
   const steps: ImplementationStep[] = [];
 
@@ -45,8 +47,8 @@ export function generateImplementationPlan(protocol: Protocol, userInputs: Recor
       {
         day: 3,
         title: 'The Feynman Sprint',
-        description: 'Explain a core concept of Applied Cognition to someone (or a rubber duck).',
-        action: 'Simplify until a 12-year-old gets it.',
+        description: 'Refine your explanation: ' + feynmanAnalogy.substring(0, 50) + '...',
+        action: 'Teach this to one person today.',
         completed: false,
         type: 'mastery'
       },
@@ -101,6 +103,7 @@ export function generateImplementationPlan(protocol: Protocol, userInputs: Recor
     protocolId: protocol.id,
     protocolTitle: protocol.title,
     userGoal,
+    feynmanAnalogy,
     steps,
     startedAt: new Date().toISOString()
   };

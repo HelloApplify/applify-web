@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles, Trophy, Settings, ArrowLeft } from 'lucide-react'
+import { X, CheckCircle2, Zap, Brain, Target, ArrowRight, ChevronLeft, Sparkles, Trophy, Settings, ArrowLeft, RefreshCw } from 'lucide-react'
 import { useProtocolStore } from '@/store/useProtocolStore'
 import { generateImplementationPlan } from '@/utils/implementationEngine'
 import Link from 'next/link'
@@ -30,6 +30,8 @@ export default function ProtocolPlayer() {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [showBlueprint, setShowBlueprint] = useState(false)
+  const [isValidating, setIsValidating] = useState(false)
+  const [validationFeedback, setValidationFeedback] = useState<{ status: 'success' | 'warning' | 'error', text: string } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   if (!isModalOpen || !activeProtocol) return null
@@ -51,6 +53,36 @@ export default function ProtocolPlayer() {
   }
 
   const handleNext = async () => {
+    if (slide.validation && !validationFeedback) {
+      setIsValidating(true)
+      // Simulate AI validation latency
+      await new Promise(r => setTimeout(r, 1500))
+      
+      const input = userInputs[slide.id]?.toLowerCase() || ''
+      let status: 'success' | 'warning' | 'error' = 'success'
+      let text = 'Excellent work. Your explanation is grounded and clear.'
+
+      if (slide.validation.type === 'keyword') {
+        const missing = slide.validation.expected?.filter(k => !input.includes(k.toLowerCase()))
+        if (missing && missing.length > 0) {
+          status = 'warning'
+          text = `You're close, but you missed: ${missing.join(', ')}. ${slide.validation.prompt}`
+        }
+      } else if (slide.validation.type === 'ai') {
+        // Simple length check + keyword presence for "mock" AI
+        if (input.length < 20) {
+          status = 'error'
+          text = "This explanation is a bit too brief. Try to use an analogy to make it simpler."
+        } else {
+          text = "AI Verified: This is a great 12-year-old level explanation. You've successfully simplified the complexity."
+        }
+      }
+
+      setValidationFeedback({ status, text })
+      setIsValidating(false)
+      return
+    }
+
     if (isLast && !showBlueprint) {
       setIsGenerating(true)
       // Simulate AI generating a personalized plan based on userInputs
@@ -81,6 +113,7 @@ export default function ProtocolPlayer() {
     setSelectedOption(null)
     setShowFeedback(false)
     setFeedbackText('')
+    setValidationFeedback(null)
     prevSlide()
   }
 
@@ -386,10 +419,39 @@ export default function ProtocolPlayer() {
 
                     {/* Reflection */}
                     {slide.type === 'reflection' && (
-                      <div className="mt-4">
+                      <div className="mt-4 space-y-4">
                         <textarea placeholder={slide.placeholder || 'Type your answer...'}
+                          value={userInputs[slide.id] || ''}
                           onChange={(e) => setInput(slide.id, e.target.value)}
+                          disabled={validationFeedback !== null}
                           className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none" />
+                        
+                        <AnimatePresence>
+                          {isValidating && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                              className="flex items-center gap-3 text-blue-400 p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              <span className="text-[10px] font-black uppercase tracking-widest">AI Verifying Accuracy...</span>
+                            </motion.div>
+                          )}
+
+                          {validationFeedback && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                              className={`p-5 rounded-2xl border flex gap-4
+                                ${validationFeedback.status === 'success' ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400' : 
+                                  validationFeedback.status === 'warning' ? 'bg-yellow-500/5 border-yellow-500/20 text-yellow-400' : 
+                                  'bg-red-500/5 border-red-500/20 text-red-400'}
+                              `}>
+                              <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                <Sparkles className="w-4 h-4" />
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-widest opacity-40">AI Feedback</p>
+                                <p className="text-sm font-bold leading-relaxed">{validationFeedback.text}</p>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     )}
                   </>
@@ -405,10 +467,10 @@ export default function ProtocolPlayer() {
             className="flex items-center gap-1.5 text-white/30 hover:text-white transition-colors disabled:invisible text-sm font-bold">
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
-          <button onClick={handleNext} disabled={isGenerating}
+          <button onClick={handleNext} disabled={isGenerating || isValidating}
             className="flex items-center gap-2 text-black px-6 py-3 rounded-xl font-black text-sm hover:scale-[1.02] active:scale-[0.97] transition-all"
-            style={{ backgroundColor: isLast && showBlueprint ? '#10b981' : segColor, boxShadow: `0 0 20px ${isLast && showBlueprint ? '#10b981' : segColor}30` }}>
-            {isLast ? (showBlueprint ? 'Finish Mission' : 'Generate Blueprint') : 'Continue'} <ArrowRight className="w-4 h-4" />
+            style={{ backgroundColor: isLast && showBlueprint ? '#10b981' : (validationFeedback ? '#FFF' : segColor), boxShadow: `0 0 20px ${isLast && showBlueprint ? '#10b981' : (validationFeedback ? '#FFF' : segColor)}30` }}>
+            {validationFeedback ? 'Accept & Continue' : (isLast ? (showBlueprint ? 'Finish Mission' : 'Generate Blueprint') : 'Continue')} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

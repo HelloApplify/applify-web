@@ -121,7 +121,12 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
 
     { id: 'r4', type: 'reflection', segment: 'practice', title: 'Let\'s test this right now.',
       content: 'WITHOUT scrolling back up, write down the 3 encoding formats your brain uses.\n\nNo peeking. The struggle is the point.',
-      placeholder: 'The three encoding formats are...' },
+      placeholder: 'The three encoding formats are...',
+      validation: {
+        type: 'keyword',
+        expected: ['visual', 'auditory', 'semantic'],
+        prompt: 'The 3 encoding formats are Visual, Auditory, and Semantic. Did you get them all?'
+      } },
     { id: 'r5', type: 'content', segment: 'practice', title: 'How did that feel?',
       content: 'If it was hard — GOOD.\n\nThat struggle is your brain building a stronger connection. The harder it is to recall something, the stronger the memory becomes when you finally do.\n\nScientists call this "desirable difficulty."' },
 
@@ -153,7 +158,11 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
 
     { id: 'fe3', type: 'reflection', segment: 'practice', title: 'Your turn.',
       content: 'Pick ONE concept from this protocol so far.\n\nNow explain it like you\'re talking to a younger sibling who has no idea what any of this means.',
-      placeholder: 'In really simple words, here\'s what I learned...' },
+      placeholder: 'In really simple words, here\'s what I learned...',
+      validation: {
+        type: 'ai',
+        prompt: 'Check if this explanation is simple enough for a 12-year-old. It should avoid jargon like "encoding" without explaining it, and use a relatable analogy.'
+      } },
 
     { id: 'p_check', type: 'checkpoint', segment: 'practice', title: '🔥 You\'re crushing it.',
       content: 'You now know Active Recall, Spaced Repetition, and the Feynman Technique.\n\nThese three tools alone put you ahead of 95% of learners.\n\nOne more section to go — let\'s make this real.' },

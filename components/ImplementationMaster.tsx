@@ -83,10 +83,10 @@ export default function ImplementationMaster() {
 
           <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5">
             <h5 className="text-[10px] font-black text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-              <Brain className="w-3.5 h-3.5 text-blue-400" /> Cognitive Anchor
+              <Brain className="w-3.5 h-3.5 text-blue-400" /> Mastery Analogy
             </h5>
             <p className="text-xs font-medium text-white/60 leading-relaxed italic">
-              "The struggle you feel during recall is the moment of growth. Don't look at the answers until you've sat with the silence for 30 seconds."
+              "{activePlan.feynmanAnalogy || "The struggle you feel during recall is the moment of growth. Don't look at the answers until you've sat with the silence for 30 seconds."}"
             </p>
           </div>
         </div>
