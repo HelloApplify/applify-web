@@ -9,8 +9,11 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
   level: 1,
   slides: [
     // ═══ HOOK ═══
-    { id: 'h1', type: 'content', segment: 'hook', title: 'What if everything you know about learning... is wrong?',
-      content: 'Most people think some people are just "naturally smart." They believe you either get it quickly, or you don\'t.\n\nBut science tells a completely different story.' },
+    { id: 'h1', type: 'hook', segment: 'hook', title: 'Applied Cognition',
+      content: 'Mission: Master the Science of Speed' },
+    { id: 'h1_2', type: 'content', segment: 'hook', title: 'What if everything you know about learning... is wrong?',
+      content: 'Most people think some people are just "naturally smart." They believe you either get it quickly, or you don\'t.\n\nBut science tells a completely different story.',
+      visualComponent: 'IdentityShift' },
     { id: 'h2', type: 'poll', segment: 'hook', title: 'Quick check-in',
       content: 'When you try to learn something new, what usually happens?',
       options: [
@@ -182,7 +185,8 @@ export const APPLIED_COGNITION_PROTOCOL: Protocol = {
         { label: '📅 In 2-3 days' }
       ] },
     { id: 'a5', type: 'content', segment: 'apply', title: 'Your Applied Cognition Protocol:',
-      content: '1️⃣ ENCODE with meaning\nConnect new info to your life.\n\n2️⃣ RECALL actively\nTest yourself — don\'t just re-read.\n\n3️⃣ SPACE it out\nReview at 1 day, 3 days, 7 days, 30 days.\n\n4️⃣ EXPLAIN simply\nIf you can\'t teach it, you don\'t know it.\n\nThis is your operating system for learning. Use it for everything.' },
+      content: '1️⃣ ENCODE with meaning\nConnect new info to your life.\n\n2️⃣ RECALL actively\nTest yourself — don\'t just re-read.\n\n3️⃣ SPACE it out\nReview at 1 day, 3 days, 7 days, 30 days.\n\n4️⃣ EXPLAIN simply\nIf you can\'t teach it, you don\'t know it.\n\nThis is your operating system for learning. Use it for everything.',
+      visualComponent: 'HabitLoop' },
     { id: 'done', type: 'celebration', segment: 'apply', title: 'Protocol Complete 🎉',
       content: 'You just upgraded your brain\'s operating system.\n\nLevel 1 of Applied Cognition is complete.\n\nYour next module unlocks now.' },
   ]

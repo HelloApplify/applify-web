@@ -12,9 +12,14 @@ const BrainEncoder = dynamic(() => import('@/components/visuals/BrainEncoder'), 
 const ForgettingCurve = dynamic(() => import('@/components/visuals/ForgettingCurve'), { ssr: false })
 const FeynmanSteps = dynamic(() => import('@/components/visuals/FeynmanSteps'), { ssr: false })
 const RecallVsRecognition = dynamic(() => import('@/components/visuals/RecallVsRecognition'), { ssr: false })
+const CinematicHook = dynamic(() => import('@/components/visuals/CinematicHook'), { ssr: false })
+const HabitLoop = dynamic(() => import('@/components/visuals/HabitLoop'), { ssr: false })
+const IdentityShift = dynamic(() => import('@/components/visuals/IdentityShift'), { ssr: false })
+const AmbientBackground = dynamic(() => import('@/components/visuals/AmbientBackground'), { ssr: false })
 
-const VISUALS: Record<string, React.ComponentType> = {
-  BrainEncoder, ForgettingCurve, FeynmanSteps, RecallVsRecognition
+const VISUALS: Record<string, React.ComponentType<any>> = {
+  BrainEncoder, ForgettingCurve, FeynmanSteps, RecallVsRecognition, 
+  CinematicHook, HabitLoop, IdentityShift
 }
 
 export default function ProtocolPlayer() {
@@ -135,13 +140,32 @@ export default function ProtocolPlayer() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="max-w-lg mx-auto w-full px-5 sm:px-8 py-6 sm:py-10">
+        <div className="flex-1 overflow-y-auto min-h-0 relative">
+          <AmbientBackground />
+          <div className="max-w-lg mx-auto w-full px-5 sm:px-8 py-6 sm:py-10 relative z-10">
             <AnimatePresence mode="wait">
               <motion.div key={slide.id}
                 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+
+                {/* Cinematic Hook */}
+                {slide.type === 'hook' && (
+                  <div className="space-y-8">
+                    <CinematicHook title={slide.title} subtitle={slide.content} />
+                    <motion.div 
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
+                      className="flex justify-center"
+                    >
+                      <button onClick={handleNext} className="group flex flex-col items-center gap-3">
+                        <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                          <ArrowRight className="w-5 h-5 text-white" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Initialize Protocol</span>
+                      </button>
+                    </motion.div>
+                  </div>
+                )}
 
                 {/* Celebration & Blueprint */}
                 {slide.type === 'celebration' && (
@@ -281,19 +305,39 @@ export default function ProtocolPlayer() {
                 )}
 
                 {/* Content / Quiz / Poll / Reflection / Visual */}
-                {!['celebration', 'checkpoint', 'narration', 'video'].includes(slide.type) && (
+                {!['celebration', 'checkpoint', 'narration', 'video', 'hook'].includes(slide.type) && (
                   <>
-                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
+                    <div className="mb-8">
+                      {VisualComp ? (
+                        <div className="relative rounded-3xl overflow-hidden bg-white/[0.02] border border-white/5 p-6 shadow-2xl">
+                          <VisualComp />
+                        </div>
+                      ) : (
+                        <div className="flex justify-center py-6">
+                           <motion.div 
+                             animate={{ 
+                               scale: [1, 1.1, 1],
+                               rotate: [0, 5, -5, 0] 
+                             }}
+                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                             className="w-20 h-20 rounded-[2rem] bg-gradient-to-tr from-white/5 to-white/10 border border-white/10 flex items-center justify-center"
+                           >
+                             {slide.segment === 'hook' && <Zap className="w-8 h-8 text-yellow-400" />}
+                             {slide.segment === 'learn' && <Brain className="w-8 h-8 text-blue-400" />}
+                             {slide.segment === 'practice' && <Sparkles className="w-8 h-8 text-purple-400" />}
+                             {slide.segment === 'apply' && <Target className="w-8 h-8 text-emerald-400" />}
+                           </motion.div>
+                        </div>
+                      )}
+                    </div>
+
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-4 leading-tight">
                       {slide.title}
                     </h2>
-                    <p className="text-base sm:text-lg text-white/50 font-medium leading-relaxed whitespace-pre-line mb-6">
+                    <p className="text-base sm:text-lg text-white/50 font-medium leading-relaxed whitespace-pre-line mb-8">
                       {slide.content}
                     </p>
 
-                    {/* Visual */}
-                    {slide.type === 'visual' && VisualComp && (
-                      <div className="my-4"><VisualComp /></div>
-                    )}
 
                     {/* Quiz Options */}
                     {(slide.type === 'quiz') && slide.options && (

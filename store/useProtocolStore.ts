@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { ImplementationPlan } from '@/utils/implementationEngine'
 
 export type SegmentType = 'hook' | 'learn' | 'practice' | 'apply';
-export type SlideType = 'content' | 'quiz' | 'poll' | 'visual' | 'reflection' | 'checkpoint' | 'celebration' | 'narration' | 'video';
+export type SlideType = 'content' | 'quiz' | 'poll' | 'visual' | 'reflection' | 'checkpoint' | 'celebration' | 'narration' | 'video' | 'hook';
 
 export interface NarrationScene {
   text: string
