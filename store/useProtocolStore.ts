@@ -1,32 +1,50 @@
 import { create } from 'zustand'
 
-export interface ProtocolStep {
+export type SegmentType = 'hook' | 'simulation' | 'integration';
+export type SlideType = 'content' | 'quiz' | 'simulation' | 'integration';
+
+export interface ProtocolSlide {
   id: string
-  prompt: string
-  options: { label: string; nextStepId: string | 'END' }[]
+  type: SlideType
+  segment: SegmentType
+  title: string
+  description?: string
+  content?: string
+  imageUrl?: string
+  simulationComponent?: string // Reference to a component name
+  options?: { label: string; nextSlideIndex?: number; isCorrect?: boolean }[]
 }
 
 export interface Protocol {
   id: string
   title: string
-  steps: Record<string, ProtocolStep>
-  firstStepId: string
+  description: string
+  category: string
+  duration: string
+  level: number
+  slides: ProtocolSlide[]
 }
 
 interface ProtocolState {
   activeProtocol: Protocol | null
-  currentStepId: string | null
+  currentSlideIndex: number
   isModalOpen: boolean
   startProtocol: (protocol: Protocol) => void
-  advanceStep: (nextStepId: string) => void
+  nextSlide: () => void
+  prevSlide: () => void
   closeModal: () => void
 }
 
 export const useProtocolStore = create<ProtocolState>((set) => ({
   activeProtocol: null,
-  currentStepId: null,
+  currentSlideIndex: 0,
   isModalOpen: false,
-  startProtocol: (protocol) => set({ activeProtocol: protocol, currentStepId: protocol.firstStepId, isModalOpen: true }),
-  advanceStep: (nextStepId) => set({ currentStepId: nextStepId }),
-  closeModal: () => set({ activeProtocol: null, currentStepId: null, isModalOpen: false })
+  startProtocol: (protocol) => set({ activeProtocol: protocol, currentSlideIndex: 0, isModalOpen: true }),
+  nextSlide: () => set((state) => ({ 
+    currentSlideIndex: Math.min(state.currentSlideIndex + 1, (state.activeProtocol?.slides.length || 1) - 1) 
+  })),
+  prevSlide: () => set((state) => ({ 
+    currentSlideIndex: Math.max(state.currentSlideIndex - 1, 0) 
+  })),
+  closeModal: () => set({ activeProtocol: null, currentSlideIndex: 0, isModalOpen: false })
 }))
